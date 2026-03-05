@@ -1,17 +1,9 @@
 <!doctype html>
 <html lang="de">
-<head>
+<link rel="apple-touch-icon" href="icon-192.png">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>RocketCare</title>
-
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#ffffff">
-
-  <!-- iPhone Home-Screen Icon -->
-  <link rel="apple-touch-icon" href="icon-192.png">
-
+<title>RocketCare</title>
   <style>
     body { font-family: system-ui, -apple-system, Arial, sans-serif; margin: 18px; max-width: 1050px; }
     h1 { margin: 0 0 6px; }
@@ -54,6 +46,40 @@
 
   <!-- DASHBOARD -->
   <section class="tab card" id="tab_dashboard">
+    <section class="tab card hide" id="tab_profil">
+  <div class="row">
+    <b>🐶 Rocket – Profil</b>
+    <span class="right row">
+      <button class="primary" onclick="saveProfile()">💾 Speichern</button>
+    </span>
+  </div>
+
+  <div class="grid2" style="margin-top:10px;">
+    <div>
+      <label>Name</label>
+      <input id="p_name" type="text" value="Rocket" />
+    </div>
+    <div>
+      <label>Rasse</label>
+      <input id="p_breed" type="text" value="Welsh Corgi Cardigan" />
+    </div>
+
+    <div>
+      <label>Geburtstag</label>
+      <input id="p_birth" type="date" value="2024-10-18" />
+    </div>
+    <div>
+      <label>Zielgewicht (optional, kg)</label>
+      <input id="p_goal" type="text" placeholder="z.B. 13-15" />
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <b>Auswertung</b>
+    <div class="small" id="p_ageText" style="margin-top:6px;">Alter: —</div>
+    <div class="small" id="p_goalText" style="margin-top:6px;">Zielgewicht: —</div>
+  </div>
+</section>
     <div class="row">
       <span class="pill" id="badge">Status…</span>
       <span class="pill" id="todayPill">Heute: —</span>
@@ -420,6 +446,7 @@
 <script>
   // ---------- Storage Keys ----------
   const K = {
+    profile: "hh_v2_profile",
     weight: "hh_v2_weight",
     gassi: "hh_v2_gassi",
     kacki: "hh_v2_kacki",
@@ -498,6 +525,7 @@
   // ---------- Tabs ----------
   const tabs = [
     { id:"dashboard", label:"🏠 Übersicht" },
+    { id:"profil", label:"🐶 Rocket" },
     { id:"gewicht", label:"⚖️ Gewicht" },
     { id:"gassi", label:"🚶 Gassi-Note" },
     { id:"kacki", label:"💩 Kacki" },
@@ -1074,6 +1102,82 @@
   showTab("dashboard");
   renderAll();
   setInterval(renderAll, 30_000); // aktualisiert "vor x" auf dem Dashboard
+function calcAgeText(birthISO) {
+  if (!birthISO) return "—";
+  const b = new Date(birthISO + "T00:00:00");
+  if (!Number.isFinite(b.getTime())) return "—";
+
+  const now = new Date();
+  let years = now.getFullYear() - b.getFullYear();
+  let months = now.getMonth() - b.getMonth();
+  let days = now.getDate() - b.getDate();
+
+  if (days < 0) {
+    // Tage "ausleihen" vom Vormonat
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+    months -= 1;
+  }
+  if (months < 0) {
+    months += 12;
+    years -= 1;
+  }
+  if (years < 0) return "—";
+
+  const yTxt = years === 1 ? "1 Jahr" : `${years} Jahre`;
+  const mTxt = months === 1 ? "1 Monat" : `${months} Monate`;
+  const dTxt = days === 1 ? "1 Tag" : `${days} Tage`;
+
+  // kurz & schön:
+  if (years === 0) return `${mTxt} ${dTxt}`;
+  return `${yTxt} ${mTxt}`;
+}
+
+function loadProfile() {
+  const p = loadObj(BASE_KEYS?.profile ?? K.profile) || {};
+  // Defaults
+  if (!p.name) p.name = "Rocket";
+  if (!p.breed) p.breed = "Welsh Corgi Cardigan";
+  if (!p.birth) p.birth = "2024-10-18";
+  return p;
+}
+
+function renderProfile() {
+  const key = (BASE_KEYS?.profile ?? K.profile);
+  const p = loadObj(key) || { name:"Rocket", breed:"Welsh Corgi Cardigan", birth:"2024-10-18", goal:"" };
+
+  const nameEl = document.getElementById("p_name");
+  const breedEl = document.getElementById("p_breed");
+  const birthEl = document.getElementById("p_birth");
+  const goalEl = document.getElementById("p_goal");
+
+  if (nameEl) nameEl.value = p.name || "Rocket";
+  if (breedEl) breedEl.value = p.breed || "Welsh Corgi Cardigan";
+  if (birthEl) birthEl.value = p.birth || "2024-10-18";
+  if (goalEl) goalEl.value = p.goal || "";
+
+  const ageText = calcAgeText((birthEl?.value) || p.birth);
+  const ageOut = document.getElementById("p_ageText");
+  if (ageOut) ageOut.textContent = `Alter: ${ageText}`;
+
+  const goalOut = document.getElementById("p_goalText");
+  const goal = (goalEl?.value || p.goal || "").trim();
+  goalOut.textContent = goal ? `Zielgewicht: ${goal} kg` : "Zielgewicht: — (optional)";
+}
+
+function saveProfile() {
+  const key = (BASE_KEYS?.profile ?? K.profile);
+  const p = {
+    name: (document.getElementById("p_name")?.value || "").trim() || "Rocket",
+    breed: (document.getElementById("p_breed")?.value || "").trim() || "Welsh Corgi Cardigan",
+    birth: (document.getElementById("p_birth")?.value || "").trim() || "2024-10-18",
+    goal: (document.getElementById("p_goal")?.value || "").trim()
+  };
+  saveObj(key, p);
+  alert("Profil gespeichert.");
+  renderProfile();
+  // Optional: Überschrift dynamisch später
+}
 </script>
 </body>
 </html>
