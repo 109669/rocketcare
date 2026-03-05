@@ -246,14 +246,126 @@ body.dark .tooltip{ background: rgba(28,28,30,0.92); }
   opacity: .75;
 }
 .big-accordion.open .accordion-arrow{ transform: rotate(180deg); }
+/* Platz oben für Header */
+.container{ padding-top: 74px; }
+
+/* Topbar */
+.topbar{
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 10px 12px;
+  z-index: 9998;
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.iconbtn{
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.55);
+  box-shadow: var(--shadow2);
+}
+body.dark .iconbtn{ background: rgba(255,255,255,0.06); }
+
+.topbar-title{ flex: 1; min-width: 0; }
+.topbar-name{ font-weight: 800; letter-spacing: -0.02em; }
+.topbar-sub{ font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Drawer + Overlay */
+.overlay{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 9997;
+  display:none;
+}
+
+.drawer{
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: min(320px, 86vw);
+  background: var(--cardSolid);
+  border-right: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  z-index: 9999;
+  transform: translateX(-105%);
+  transition: transform .22s ease;
+  padding: 12px;
+  display:flex;
+  flex-direction: column;
+  gap: 8px;
+}
+body.dark .drawer{ background: var(--cardSolid); }
+
+.drawer.open{ transform: translateX(0); }
+.overlay.open{ display:block; }
+
+.drawer-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 6px 2px 10px;
+}
+
+.menubtn{
+  width: 100%;
+  text-align: left;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.55);
+  box-shadow: var(--shadow2);
+}
+body.dark .menubtn{ background: rgba(255,255,255,0.06); }
+
+.divider{ height:1px; background: var(--line); margin: 6px 0; }
   </style>
 </head>
-</div><body><div class="container"></div>
+</div><body><div class="container">
+  <header class="topbar">
+  <button class="iconbtn" onclick="openMenu()" aria-label="Menü öffnen">☰</button>
+  <div class="topbar-title">
+    <div class="topbar-name">RocketCare</div>
+    <div class="topbar-sub">Rocket · Welsh Corgi Cardigan</div>
+  </div>
+  <button class="iconbtn" onclick="toggleTheme()" aria-label="Dark Mode">🌙</button>
+</header>
+
+<div id="menuOverlay" class="overlay" onclick="closeMenu()"></div>
+
+<nav id="menuDrawer" class="drawer" aria-label="Navigation">
+  <div class="drawer-head">
+    <b>Menü</b>
+    <button class="iconbtn" onclick="closeMenu()" aria-label="Menü schließen">✕</button>
+  </div>
+
+  <button class="menubtn" onclick="go('dashboard')">🏠 Übersicht</button>
+  <button class="menubtn" onclick="go('profil')">🐶 Profil</button>
+  <div class="divider"></div>
+
+  <button class="menubtn" onclick="go('gewicht')">⚖️ Gewicht</button>
+  <button class="menubtn" onclick="go('gassi')">🚶 Gassi</button>
+  <button class="menubtn" onclick="go('kacki')">💩 Kacki</button>
+  <button class="menubtn" onclick="go('futter')">🍽️ Futter</button>
+  <button class="menubtn" onclick="go('hundeschule')">🎓 Hundeschule</button>
+  <button class="menubtn" onclick="go('notfall')">🆘 Notfallkarte</button>
+
+  <div class="divider"></div>
+  <button class="menubtn" onclick="go('export')">📦 Export/Backup</button>
+</nav>
+</div>
   <h1>🚀 RocketCare</h1>
 <p class="sub">Rocket – Welsh Corgi Cardigan</p>
   <p class="sub">Alles läuft offline im Browser (Daten bleiben auf diesem Gerät gespeichert).</p>
-
-  <div class="tabs" id="tabs"></div>
 
   <!-- DASHBOARD -->
 <section class="tab card" id="tab_dashboard">
@@ -753,6 +865,18 @@ body.dark .tooltip{ background: rgba(28,28,30,0.92); }
     emergency:"hh_v2_emergency"
   };
 
+  function openMenu(){
+  document.getElementById("menuDrawer")?.classList.add("open");
+  document.getElementById("menuOverlay")?.classList.add("open");
+}
+function closeMenu(){
+  document.getElementById("menuDrawer")?.classList.remove("open");
+  document.getElementById("menuOverlay")?.classList.remove("open");
+}
+function go(tabId){
+  closeMenu();
+  showTab(tabId);
+}
 // --- Theme (Dark Mode) ---
 const THEME_KEY = "rocketcare_theme"; // "dark" | "light" | null
 
