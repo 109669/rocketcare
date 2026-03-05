@@ -48,6 +48,7 @@
 <section class="tab card" id="tab_dashboard">
 
   <div class="row">
+    <div class="small" id="dashProfileTxt" style="margin-top:8px;">—</div>
     <span class="pill" id="badge">Status…</span>
     <span class="pill" id="todayPill">Heute: —</span>
     <span class="right row">
@@ -1005,6 +1006,14 @@
       if (hasBlood || isBlack) anyWarn = true;
     }
     $("badge").textContent = anyWarn ? "⚠️ Achtung (Kacki)" : "✅ Alles ok";
+  
+  const p = loadProfile();
+const dash = document.getElementById("dashProfileTxt");
+if (dash) {
+  dash.textContent = p
+    ? `${p.name} · ${p.breed} · ${calcAgeText(p.birth)}`
+    : "Profil noch nicht gespeichert.";
+}
   }
 
   // ---------- Export per section ----------
@@ -1108,6 +1117,7 @@
     renderFood();
     renderSchool();
     renderEmergency();
+    renderProfile();
   }
 
   // init
@@ -1190,6 +1200,85 @@ function saveProfile() {
   alert("Profil gespeichert.");
   renderProfile();
   // Optional: Überschrift dynamisch später
+}
+// --- Profil (Rocket) ---
+const PROFILE_KEY = "rocketcare_profile";
+
+function calcAgeText(birthISO) {
+  if (!birthISO) return "—";
+  const b = new Date(birthISO + "T00:00:00");
+  if (!Number.isFinite(b.getTime())) return "—";
+
+  const now = new Date();
+  let years = now.getFullYear() - b.getFullYear();
+  let months = now.getMonth() - b.getMonth();
+  let days = now.getDate() - b.getDate();
+
+  if (days < 0) {
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+    months -= 1;
+  }
+  if (months < 0) {
+    months += 12;
+    years -= 1;
+  }
+  if (years < 0) return "—";
+
+  const y = years === 1 ? "1 Jahr" : `${years} Jahre`;
+  const m = months === 1 ? "1 Monat" : `${months} Monate`;
+
+  if (years === 0) return `${m}`;
+  return `${y} ${m}`;
+}
+
+function loadProfile() {
+  try {
+    const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
+    return p || null;
+  } catch {
+    return null;
+  }
+}
+
+function saveProfile() {
+  const p = {
+    name: (document.getElementById("p_name")?.value || "").trim() || "Rocket",
+    breed: (document.getElementById("p_breed")?.value || "").trim() || "Welsh Corgi Cardigan",
+    birth: (document.getElementById("p_birth")?.value || "").trim() || "2024-10-18",
+    goal: (document.getElementById("p_goal")?.value || "").trim()
+  };
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+  alert("Profil gespeichert ✅");
+  renderProfile();
+  renderDashboard?.(); // falls vorhanden
+}
+
+function renderProfile() {
+  const p = loadProfile() || {
+    name: "Rocket",
+    breed: "Welsh Corgi Cardigan",
+    birth: "2024-10-18",
+    goal: ""
+  };
+
+  const nameEl = document.getElementById("p_name");
+  const breedEl = document.getElementById("p_breed");
+  const birthEl = document.getElementById("p_birth");
+  const goalEl = document.getElementById("p_goal");
+
+  if (nameEl) nameEl.value = p.name;
+  if (breedEl) breedEl.value = p.breed;
+  if (birthEl) birthEl.value = p.birth;
+  if (goalEl) goalEl.value = p.goal || "";
+
+  const ageOut = document.getElementById("p_ageText");
+  if (ageOut) ageOut.textContent = `Alter: ${calcAgeText(p.birth)}`;
+
+  const goalOut = document.getElementById("p_goalText");
+  if (goalOut) goalOut.textContent = p.goal ? `Zielgewicht: ${p.goal} kg` : "Zielgewicht: — (optional)";
+
+  
 }
 </script>
 </body>
