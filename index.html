@@ -228,6 +228,24 @@ body.dark .tabbtn{ background: rgba(255,255,255,0.06); }
   display:block;
 }
 body.dark .tooltip{ background: rgba(28,28,30,0.92); }
+
+/* Große Sektionen in Tabs: standardmäßig zu */
+.big-accordion .accordion-content { display: none; margin-top: 12px; }
+.big-accordion.open .accordion-content { display: block; }
+
+.big-accordion .accordion-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.big-accordion .accordion-arrow{
+  transition: transform .2s ease;
+  opacity: .75;
+}
+.big-accordion.open .accordion-arrow{ transform: rotate(180deg); }
   </style>
 </head>
 </div><body><div class="container"></div>
@@ -254,69 +272,58 @@ body.dark .tooltip{ background: rgba(28,28,30,0.92); }
 
   <div class="grid2">
 
-  <div class="card accordion">
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span>⚖️ Gewicht</span>
+ <div class="grid2">
+
+  <div class="card">
+    <div class="row">
+      <b>⚖️ Gewicht</b>
       <span class="pill" id="dashWeight">—</span>
     </div>
-
-    <div class="accordion-content">
-      <div class="small" id="dashWeightTxt">Noch kein Eintrag.</div>
-    </div>
+    <div class="small" id="dashWeightTxt">Noch kein Eintrag.</div>
   </div>
 
-  <div class="card accordion">
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span>🐕 Letzte Gassi-Note</span>
+  <div class="card">
+    <div class="row">
+      <b>🐕 Letzte Gassi-Note</b>
       <span class="pill" id="dashGassi">—</span>
     </div>
-
-    <div class="accordion-content">
-      <div class="small" id="dashGassiTxt">Noch kein Eintrag.</div>
-    </div>
+    <div class="small" id="dashGassiTxt">Noch kein Eintrag.</div>
   </div>
 
-  <div class="card accordion">
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span>💩 Letzte Kacki-Diagnose</span>
+  <div class="card">
+    <div class="row">
+      <b>💩 Letzte Kacki-Diagnose</b>
       <span class="pill" id="dashKacki">—</span>
     </div>
-
-    <div class="accordion-content">
-      <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
-    </div>
+    <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
   </div>
 
-  <div class="card accordion">
-    <div class="accordion-header" onclick="toggleAccordion(this)">
-      <span>🍖 Letzte Mahlzeit</span>
+  <div class="card">
+    <div class="row">
+      <b>🍖 Letzte Mahlzeit</b>
       <span class="pill" id="dashFood">—</span>
     </div>
-
-    <div class="accordion-content">
-      <div class="small" id="dashFoodTxt">Noch kein Eintrag.</div>
-    </div>
+    <div class="small" id="dashFoodTxt">Noch kein Eintrag.</div>
   </div>
 
 </div>
 
-<div class="card accordion">
+<div class="card">
 
-  <div class="accordion-header" onclick="toggleAccordion(this)">
-    <span>🚑 Notfallkarte</span>
+  <div class="row">
+    <b>🚑 Notfallkarte</b>
     <span class="pill" id="dashEmergency">—</span>
   </div>
 
-  <div class="accordion-content">
-    <div class="small" id="dashEmergencyTxt">Noch nicht ausgefüllt.</div>
+  <div class="small" id="dashEmergencyTxt">Noch nicht ausgefüllt.</div>
 
-    <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="showTab('notfall')">
-        ➡️ Notfallkarte öffnen
-      </button>
-    </div>
+  <div class="row" style="margin-top:10px;">
+    <button class="primary" onclick="showTab('notfall')">
+      ➡️ Notfallkarte öffnen
+    </button>
   </div>
 
+</div>
 </div>
 </section>
 
@@ -363,310 +370,358 @@ body.dark .tooltip{ background: rgba(28,28,30,0.92); }
  
 
   <!-- GEWICHT -->
-  <section class="tab card hide" id="tab_gewicht">
-    <div class="row">
-      <b>⚖️ Gewicht-Logbuch</b>
-      <span class="pill" id="weightCount">—</span>
-      <span class="right row">
-        <button onclick="exportSection('weight')">📄 Export</button>
-      </span>
+<section class="tab card hide" id="tab_gewicht">
+  <div class="card big-accordion">
+    <div class="accordion-header" onclick="toggleBigAccordion(this)">
+      <span>⚖️ Gewicht-Logbuch</span>
+      <span class="accordion-arrow">▼</span>
     </div>
 
-    <div class="grid3" style="margin-top:10px;">
-      <div>
-        <label>Datum & Uhrzeit</label>
-        <input id="w_dt" type="datetime-local" />
+    <div class="accordion-content">
+      <div class="row">
+        <span class="pill" id="weightCount">—</span>
+        <span class="right row">
+          <button onclick="exportSection('weight')">📄 Export</button>
+        </span>
       </div>
-      <div>
-        <label>Gewicht (kg)</label>
-        <input id="w_kg" type="number" step="0.1" placeholder="z.B. 12.4" />
-      </div>
-      <div>
-        <label>Notiz (optional)</label>
-        <input id="w_note" type="text" placeholder="z.B. morgens, nach dem Fressen…" />
-      </div>
-    </div>
 
-    <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="addWeight()">➕ Eintragen</button>
-      <span class="small">Tipp: regelmäßig (z.B. 1× pro Woche) eintragen.</span>
-    </div>
-
-    <div class="card chartWrap" style="margin-top:12px;">
-      <b>Gewichtskurve</b>
-      <div class="small">Je mehr Einträge, desto besser die Kurve.</div>
-      <svg id="weightChart" viewBox="0 0 800 220" aria-label="Gewichtskurve"></svg>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <b>Einträge</b>
-      <div class="small muted">Neueste oben. Du kannst auch löschen.</div>
-      <table class="table" id="weightTable"></table>
-    </div>
-  </section>
-
-  <!-- GASSI NOTE -->
-  <section class="tab card hide" id="tab_gassi">
-    <div class="row">
-      <b>🚶 Gassi-Bewertung (Schulnote 1–6)</b>
-      <span class="pill" id="gassiCount">—</span>
-      <span class="right row">
-        <button onclick="exportSection('gassi')">📄 Export</button>
-      </span>
-    </div>
-
-    <div class="grid3" style="margin-top:10px;">
-      <div>
-        <label>Datum & Uhrzeit</label>
-        <input id="g_dt" type="datetime-local" />
-      </div>
-      <div>
-        <label>Note (1 = sehr gut, 6 = schlecht)</label>
-        <select id="g_grade">
-          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-        </select>
-      </div>
-      <div>
-        <label>Notiz (optional)</label>
-        <input id="g_note" type="text" placeholder="z.B. Leinenführigkeit, Begegnungen…" />
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="addGassi()">➕ Eintragen</button>
-      <span class="small">Kurve: Note 1 ist oben (besser).</span>
-    </div>
-
-    <div class="card chartWrap" style="margin-top:12px;">
-      <b>Gassi-Noten-Kurve</b>
-      <svg id="gassiChart" viewBox="0 0 800 220" aria-label="Gassi Noten"></svg>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <b>Einträge</b>
-      <table class="table" id="gassiTable"></table>
-    </div>
-  </section>
-
-  <!-- KACKI -->
-  <section class="tab card hide" id="tab_kacki">
-    <div class="row">
-      <b>💩 Kacki-Diagnose</b>
-      <span class="pill" id="kackiCount">—</span>
-      <span class="right row">
-        <button onclick="exportSection('kacki')">📄 Export</button>
-      </span>
-    </div>
-
-    <div class="grid3" style="margin-top:10px;">
-      <div>
-        <label>Datum & Uhrzeit</label>
-        <input id="k_dt" type="datetime-local" />
-      </div>
-      <div>
-        <label>Konsistenz (Bristol 1–7)</label>
-        <select id="k_bristol">
-          <option value="1">1 (sehr hart)</option>
-          <option value="2">2</option>
-          <option value="3">3 (gut)</option>
-          <option value="4" selected>4 (ideal)</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7 (sehr flüssig)</option>
-        </select>
-      </div>
-      <div>
-        <label>Farbe</label>
-        <select id="k_color">
-          <option>braun</option>
-          <option>hellbraun</option>
-          <option>dunkel</option>
-          <option>gelblich</option>
-          <option>grünlich</option>
-          <option>schwarz</option>
-          <option>rot (Blut?)</option>
-          <option>grau/weißlich</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="grid2" style="margin-top:10px;">
-      <div>
-        <label>Extras</label>
-        <div class="row">
-          <label class="pill"><input type="checkbox" id="k_mucus" /> Schleim</label>
-          <label class="pill"><input type="checkbox" id="k_blood" /> Blut</label>
-          <label class="pill"><input type="checkbox" id="k_worms" /> Würmer/Teile</label>
-          <label class="pill"><input type="checkbox" id="k_grass" /> Gras/Fremd</label>
+      <div class="grid3" style="margin-top:10px;">
+        <div>
+          <label>Datum & Uhrzeit</label>
+          <input id="w_dt" type="datetime-local" />
+        </div>
+        <div>
+          <label>Gewicht (kg)</label>
+          <input id="w_kg" type="number" step="0.1" placeholder="z.B. 12.4" />
+        </div>
+        <div>
+          <label>Notiz (optional)</label>
+          <input id="w_note" type="text" placeholder="z.B. morgens, nach dem Fressen…" />
         </div>
       </div>
-      <div>
-        <label>Notiz (optional)</label>
-        <input id="k_note" type="text" placeholder="z.B. direkt nach Futterwechsel…" />
+
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="addWeight()">➕ Eintragen</button>
+        <span class="small">Tipp: regelmäßig (z.B. 1× pro Woche) eintragen.</span>
+      </div>
+
+      <div class="card chartWrap" style="margin-top:12px;">
+        <b>Gewichtskurve</b>
+        <div class="small">Je mehr Einträge, desto besser die Kurve.</div>
+        <svg id="weightChart" viewBox="0 0 800 220" aria-label="Gewichtskurve"></svg>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <b>Einträge</b>
+        <div class="small muted">Neueste oben. Du kannst auch löschen.</div>
+        <table class="table" id="weightTable"></table>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="addKacki()">➕ Eintragen</button>
-      <span class="small">Wenn Blut/Schwarz + krank wirkt: Tierarzt kontaktieren.</span>
+<!-- GASSI NOTE -->
+<section class="tab card hide" id="tab_gassi">
+  <div class="card big-accordion">
+    <div class="accordion-header" onclick="toggleBigAccordion(this)">
+      <span>🚶 Gassi-Bewertung (Schulnote 1–6)</span>
+      <span class="accordion-arrow">▼</span>
     </div>
 
-    <div class="card" style="margin-top:12px;">
-      <b>Einträge</b>
-      <table class="table" id="kackiTable"></table>
-    </div>
-  </section>
-
-  <!-- FUTTER -->
-  <section class="tab card hide" id="tab_futter">
-    <div class="row">
-      <b>🍽️ Futter-Logbuch</b>
-      <span class="pill" id="foodCount">—</span>
-      <span class="right row">
-        <button onclick="exportSection('food')">📄 Export</button>
-      </span>
-    </div>
-
-    <div class="grid3" style="margin-top:10px;">
-      <div>
-        <label>Datum & Uhrzeit</label>
-        <input id="f_dt" type="datetime-local" />
+    <div class="accordion-content">
+      <div class="row">
+        <span class="pill" id="gassiCount">—</span>
+        <span class="right row">
+          <button onclick="exportSection('gassi')">📄 Export</button>
+        </span>
       </div>
-      <div>
-        <label>Futtermenge (g)</label>
-        <input id="f_amount" type="number" step="1" placeholder="z.B. 180" />
-      </div>
-      <div>
-        <label>Futter (Name/Sorte)</label>
-        <input id="f_food" type="text" placeholder="z.B. Rind, Trockenfutter XYZ…" />
-      </div>
-    </div>
 
-    <div class="grid2" style="margin-top:10px;">
-      <div>
-        <label>Supplements (optional)</label>
-        <input id="f_supp" type="text" placeholder="z.B. Lachsöl, Gelenk-Pulver…" />
+      <div class="grid3" style="margin-top:10px;">
+        <div>
+          <label>Datum & Uhrzeit</label>
+          <input id="g_dt" type="datetime-local" />
+        </div>
+        <div>
+          <label>Note (1 = sehr gut, 6 = schlecht)</label>
+          <select id="g_grade">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          </select>
+        </div>
+        <div>
+          <label>Notiz (optional)</label>
+          <input id="g_note" type="text" placeholder="z.B. Leinenführigkeit, Begegnungen…" />
+        </div>
       </div>
-      <div>
-        <label>Notiz (optional)</label>
-        <input id="f_note" type="text" placeholder="z.B. gut gefressen / wenig Appetit…" />
+
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="addGassi()">➕ Eintragen</button>
+        <span class="small">Kurve: Note 1 ist oben (besser).</span>
       </div>
-    </div>
 
-    <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="addFood()">➕ Eintragen</button>
-      <span class="small">Du kannst pro Mahlzeit einen Eintrag machen.</span>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <b>Einträge</b>
-      <table class="table" id="foodTable"></table>
-    </div>
-  </section>
-
-  <!-- HUNDESCHULE -->
-  <section class="tab card hide" id="tab_hundeschule">
-    <div class="row">
-      <b>🎓 Hundeschule-Logbuch</b>
-      <span class="pill" id="schoolCount">—</span>
-      <span class="right row">
-        <button onclick="exportSection('school')">📄 Export</button>
-      </span>
-    </div>
-
-    <div class="grid3" style="margin-top:10px;">
-      <div>
-        <label>Datum & Uhrzeit</label>
-        <input id="s_dt" type="datetime-local" />
+      <div class="card chartWrap" style="margin-top:12px;">
+        <b>Gassi-Noten-Kurve</b>
+        <svg id="gassiChart" viewBox="0 0 800 220" aria-label="Gassi Noten"></svg>
       </div>
-      <div>
-        <label>Kurs / Thema</label>
-        <input id="s_course" type="text" placeholder="z.B. Junghunde, Leinenführigkeit…" />
-      </div>
-      <div>
-        <label>Note (1–6)</label>
-        <select id="s_grade">
-          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-        </select>
+
+      <div class="card" style="margin-top:12px;">
+        <b>Einträge</b>
+        <table class="table" id="gassiTable"></table>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="grid2" style="margin-top:10px;">
-      <div>
-        <label>Gut gemacht?</label>
-        <select id="s_good">
-          <option value="yes">Ja ✅</option>
-          <option value="no">Nein ❌</option>
-        </select>
-      </div>
-      <div>
-        <label>Notiz (optional)</label>
-        <input id="s_note" type="text" placeholder="z.B. Ablenkung, neue Übung…" />
-      </div>
+<!-- KACKI -->
+<section class="tab card hide" id="tab_kacki">
+  <div class="card big-accordion">
+    <div class="accordion-header" onclick="toggleBigAccordion(this)">
+      <span>💩 Kacki-Diagnose</span>
+      <span class="accordion-arrow">▼</span>
     </div>
 
-    <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="addSchool()">➕ Eintragen</button>
-      <span class="small">Kurve: Note 1 ist oben (besser).</span>
+    <div class="accordion-content">
+      <div class="row">
+        <span class="pill" id="kackiCount">—</span>
+        <span class="right row">
+          <button onclick="exportSection('kacki')">📄 Export</button>
+        </span>
+      </div>
+
+      <div class="grid3" style="margin-top:10px;">
+        <div>
+          <label>Datum & Uhrzeit</label>
+          <input id="k_dt" type="datetime-local" />
+        </div>
+        <div>
+          <label>Konsistenz (Bristol 1–7)</label>
+          <select id="k_bristol">
+            <option value="1">1 (sehr hart)</option>
+            <option value="2">2</option>
+            <option value="3">3 (gut)</option>
+            <option value="4" selected>4 (ideal)</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7 (sehr flüssig)</option>
+          </select>
+        </div>
+        <div>
+          <label>Farbe</label>
+          <select id="k_color">
+            <option>braun</option>
+            <option>hellbraun</option>
+            <option>dunkel</option>
+            <option>gelblich</option>
+            <option>grünlich</option>
+            <option>schwarz</option>
+            <option>rot (Blut?)</option>
+            <option>grau/weißlich</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <label>Extras</label>
+          <div class="row">
+            <label class="pill"><input type="checkbox" id="k_mucus" /> Schleim</label>
+            <label class="pill"><input type="checkbox" id="k_blood" /> Blut</label>
+            <label class="pill"><input type="checkbox" id="k_worms" /> Würmer/Teile</label>
+            <label class="pill"><input type="checkbox" id="k_grass" /> Gras/Fremd</label>
+          </div>
+        </div>
+        <div>
+          <label>Notiz (optional)</label>
+          <input id="k_note" type="text" placeholder="z.B. direkt nach Futterwechsel…" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="addKacki()">➕ Eintragen</button>
+        <span class="small">Wenn Blut/Schwarz + krank wirkt: Tierarzt kontaktieren.</span>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <b>Einträge</b>
+        <table class="table" id="kackiTable"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUTTER -->
+<section class="tab card hide" id="tab_futter">
+  <div class="card big-accordion">
+    <div class="accordion-header" onclick="toggleBigAccordion(this)">
+      <span>🍽️ Futter-Logbuch</span>
+      <span class="accordion-arrow">▼</span>
     </div>
 
-    <div class="card chartWrap" style="margin-top:12px;">
-      <b>Hundeschule-Noten-Kurve</b>
-      <svg id="schoolChart" viewBox="0 0 800 220" aria-label="Hundeschule Noten"></svg>
+    <div class="accordion-content">
+      <div class="row">
+        <span class="pill" id="foodCount">—</span>
+        <span class="right row">
+          <button onclick="exportSection('food')">📄 Export</button>
+        </span>
+      </div>
+
+      <div class="grid3" style="margin-top:10px;">
+        <div>
+          <label>Datum & Uhrzeit</label>
+          <input id="f_dt" type="datetime-local" />
+        </div>
+        <div>
+          <label>Futtermenge (g)</label>
+          <input id="f_amount" type="number" step="1" placeholder="z.B. 180" />
+        </div>
+        <div>
+          <label>Futter (Name/Sorte)</label>
+          <input id="f_food" type="text" placeholder="z.B. Rind, Trockenfutter XYZ…" />
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <label>Supplements (optional)</label>
+          <input id="f_supp" type="text" placeholder="z.B. Lachsöl, Gelenk-Pulver…" />
+        </div>
+        <div>
+          <label>Notiz (optional)</label>
+          <input id="f_note" type="text" placeholder="z.B. gut gefressen / wenig Appetit…" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="addFood()">➕ Eintragen</button>
+        <span class="small">Du kannst pro Mahlzeit einen Eintrag machen.</span>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <b>Einträge</b>
+        <table class="table" id="foodTable"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HUNDESCHULE -->
+<section class="tab card hide" id="tab_hundeschule">
+  <div class="card big-accordion">
+    <div class="accordion-header" onclick="toggleBigAccordion(this)">
+      <span>🎓 Hundeschule-Logbuch</span>
+      <span class="accordion-arrow">▼</span>
     </div>
 
-    <div class="card" style="margin-top:12px;">
-      <b>Einträge</b>
-      <table class="table" id="schoolTable"></table>
-    </div>
-  </section>
+    <div class="accordion-content">
+      <div class="row">
+        <span class="pill" id="schoolCount">—</span>
+        <span class="right row">
+          <button onclick="exportSection('school')">📄 Export</button>
+        </span>
+      </div>
 
-  <!-- NOTFALL -->
-  <section class="tab card hide" id="tab_notfall">
-    <div class="row">
-      <b>🆘 Notfallkarte</b>
-      <span class="right row">
-        <button class="primary" onclick="saveEmergency()">💾 Speichern</button>
-        <button onclick="exportSection('emergency')">📄 Export</button>
-      </span>
+      <div class="grid3" style="margin-top:10px;">
+        <div>
+          <label>Datum & Uhrzeit</label>
+          <input id="s_dt" type="datetime-local" />
+        </div>
+        <div>
+          <label>Kurs / Thema</label>
+          <input id="s_course" type="text" placeholder="z.B. Junghunde, Leinenführigkeit…" />
+        </div>
+        <div>
+          <label>Note (1–6)</label>
+          <select id="s_grade">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <label>Gut gemacht?</label>
+          <select id="s_good">
+            <option value="yes">Ja ✅</option>
+            <option value="no">Nein ❌</option>
+          </select>
+        </div>
+        <div>
+          <label>Notiz (optional)</label>
+          <input id="s_note" type="text" placeholder="z.B. Ablenkung, neue Übung…" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="addSchool()">➕ Eintragen</button>
+        <span class="small">Kurve: Note 1 ist oben (besser).</span>
+      </div>
+
+      <div class="card chartWrap" style="margin-top:12px;">
+        <b>Hundeschule-Noten-Kurve</b>
+        <svg id="schoolChart" viewBox="0 0 800 220" aria-label="Hundeschule Noten"></svg>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <b>Einträge</b>
+        <table class="table" id="schoolTable"></table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTFALL -->
+<section class="tab card hide" id="tab_notfall">
+  <div class="card big-accordion">
+    <div class="accordion-header" onclick="toggleBigAccordion(this)">
+      <span>🆘 Notfallkarte</span>
+      <span class="accordion-arrow">▼</span>
     </div>
 
-    <div class="grid2" style="margin-top:10px;">
-      <div>
-        <label>Tierarzt / Praxisname</label>
-        <input id="e_name" type="text" placeholder="Name der Praxis" />
+    <div class="accordion-content">
+      <div class="row">
+        <span class="right row">
+          <button class="primary" onclick="saveEmergency()">💾 Speichern</button>
+          <button onclick="exportSection('emergency')">📄 Export</button>
+        </span>
       </div>
-      <div>
-        <label>Telefonnummer</label>
-        <input id="e_phone" type="tel" placeholder="+49 …" />
-      </div>
-      <div>
-        <label>Adresse</label>
-        <input id="e_addr" type="text" placeholder="Straße, PLZ Ort" />
-      </div>
-      <div>
-        <label>Notdienst / 24h (optional)</label>
-        <input id="e_emerg" type="text" placeholder="Notdienst-Nummer / Klinik" />
-      </div>
-    </div>
 
-    <div class="grid2" style="margin-top:10px;">
-      <div>
-        <label>Allergien / Krankheiten / Medis (optional)</label>
-        <textarea id="e_med" placeholder="z.B. Allergie gegen … / nimmt …"></textarea>
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <label>Tierarzt / Praxisname</label>
+          <input id="e_name" type="text" placeholder="Name der Praxis" />
+        </div>
+        <div>
+          <label>Telefonnummer</label>
+          <input id="e_phone" type="tel" placeholder="+49 …" />
+        </div>
+        <div>
+          <label>Adresse</label>
+          <input id="e_addr" type="text" placeholder="Straße, PLZ Ort" />
+        </div>
+        <div>
+          <label>Notdienst / 24h (optional)</label>
+          <input id="e_emerg" type="text" placeholder="Notdienst-Nummer / Klinik" />
+        </div>
       </div>
-      <div>
-        <label>Wichtige Hinweise (optional)</label>
-        <textarea id="e_notes" placeholder="z.B. Chipnummer, Maulkorb vorhanden, Gewicht …"></textarea>
-      </div>
-    </div>
 
-    <div class="small" style="margin-top:10px;">
-      Tipp: Du kannst die Telefonnummer am Handy später direkt anrufen, wenn du diese Datei dort öffnest.
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <label>Allergien / Krankheiten / Medis (optional)</label>
+          <textarea id="e_med" placeholder="z.B. Allergie gegen … / nimmt …"></textarea>
+        </div>
+        <div>
+          <label>Wichtige Hinweise (optional)</label>
+          <textarea id="e_notes" placeholder="z.B. Chipnummer, Maulkorb vorhanden, Gewicht …"></textarea>
+        </div>
+      </div>
+
+      <div class="small" style="margin-top:10px;">
+        Tipp: Du kannst die Telefonnummer am Handy später direkt anrufen, wenn du diese Datei dort öffnest.
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- EXPORT / IMPORT -->
   <section class="tab card hide" id="tab_export">
@@ -740,9 +795,8 @@ function toggleTheme() {
     const d = new Date(ts);
     return d.toLocaleString("de-DE", { weekday:"short", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
   }
-function toggleAccordion(el){
-  const card = el.closest(".accordion");
-  card.classList.toggle("open");
+function toggleBigAccordion(el){
+  el.closest(".big-accordion").classList.toggle("open");
 }
   function msToHuman(ms) {
     if (ms < 0) ms = 0;
