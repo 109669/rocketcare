@@ -142,10 +142,16 @@ button.danger{
 }
 body.dark .pill{ background: rgba(255,255,255,0.06); }
 
-.grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.grid3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-@media (max-width: 900px) { .grid3{ grid-template-columns: 1fr; } .grid2{ grid-template-columns: 1fr; } }
+.grid2{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
 
+/* erst bei sehr schmalen Geräten 1 Spalte */
+@media (max-width: 420px){
+  .grid2{ grid-template-columns: 1fr; }
+}
 .table{ width:100%; border-collapse: collapse; }
 .table th, .table td{
   border-bottom: 1px solid var(--line);
@@ -328,6 +334,9 @@ body.dark .drawer{ background: var(--cardSolid); }
 body.dark .menubtn{ background: rgba(255,255,255,0.06); }
 
 .divider{ height:1px; background: var(--line); margin: 6px 0; }
+
+/* Tabs verstecken/zeigen */
+.hide { display: none !important; }
   </style>
 </head>
 </div><body><div class="container">
@@ -368,7 +377,7 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
   <p class="sub">Alles läuft offline im Browser (Daten bleiben auf diesem Gerät gespeichert).</p>
 
   <!-- DASHBOARD -->
-<section class="tab card" id="tab_dashboard">
+<section class="tab card hide" id="tab_gewicht">
 
   <div class="row">
     <div class="small" id="dashProfileTxt" style="margin-top:8px;">—</div>
@@ -1141,9 +1150,19 @@ applyTheme();
     // export tab hidden from main bar, erreichbar über button
   }
 
- function showTab(id){
-  // Alle Tabs verstecken
+function showTab(id){
+  // Alle Tabs ausblenden
   document.querySelectorAll("section.tab").forEach(s => s.classList.add("hide"));
+
+  // Gewählten Tab einblenden
+  const el = document.getElementById("tab_" + id);
+  if (el) el.classList.remove("hide");
+
+  // Große Accordions im Tab geschlossen starten (optional)
+  document.querySelectorAll("#tab_" + id + " .big-accordion.open").forEach(a => a.classList.remove("open"));
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
   // Gewählten Tab zeigen
   const el = document.getElementById("tab_" + id);
