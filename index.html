@@ -4,40 +4,217 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RocketCare</title>
+<button class="primary" onclick="toggleTheme()" style="margin-top:8px;">🌙 / ☀️ Dark Mode</button>
   <style>
-    body { font-family: system-ui, -apple-system, Arial, sans-serif; margin: 18px; max-width: 1050px; }
-    h1 { margin: 0 0 6px; }
-    .sub { margin: 0 0 14px; color: #444; }
-    .tabs { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0 14px; }
-    .tabbtn { padding:10px 12px; border-radius: 999px; border:1px solid #ccc; background:#f7f7f7; cursor:pointer; }
-    .tabbtn.active { background:#fff; border-color:#bbb; }
-    .card { border: 1px solid #ddd; border-radius: 16px; padding: 14px; margin: 12px 0; background:#fff; }
-    .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    @media (max-width: 900px) { .grid3 { grid-template-columns: 1fr; } .grid2 { grid-template-columns: 1fr; } }
-    label { display:block; font-size: 13px; color:#444; margin-bottom: 4px; }
-    input, select, textarea { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 12px; border: 1px solid #ccc; font-size: 14px; }
-    textarea { min-height: 84px; }
-    button { padding: 10px 12px; border-radius: 12px; border:1px solid #ccc; background:#f7f7f7; cursor:pointer; }
-    button.primary { background:#fff; border-color:#bbb; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .small { color:#666; font-size: 13px; line-height: 1.35; }
-    .pill { display:inline-block; font-size:12px; padding: 3px 8px; border:1px solid #ddd; border-radius: 999px; color:#444; background:#fafafa; }
-    .table { width: 100%; border-collapse: collapse; }
-    .table th, .table td { border-bottom: 1px dashed #eee; padding: 10px 8px; text-align: left; vertical-align: top; }
-    .table th { font-size: 13px; color:#444; }
-    .muted { color:#666; }
-    .danger { background:#fff2f2; border-color:#ffd1d1; }
-    .ok { background:#f3fff3; border-color:#d7f0d7; }
-    .hide { display:none; }
-    .chartWrap { border:1px solid #eee; border-radius: 14px; padding: 10px; background:#fafafa; }
-    svg { width: 100%; height: 210px; display:block; }
-    .hr { height:1px; background:#eee; margin: 10px 0; }
-    pre { white-space: pre-wrap; word-break: break-word; background:#fafafa; border:1px solid #eee; padding:12px; border-radius:12px; }
-    .right { margin-left:auto; }
+:root{
+  --bg: #f5f5f7;
+  --card: rgba(255,255,255,0.85);
+  --cardSolid: #ffffff;
+  --text: #111111;
+  --muted: rgba(60,60,67,0.72);
+  --line: rgba(60,60,67,0.18);
+  --accent: #0a84ff;
+  --danger: #ff3b30;
+  --ok: #34c759;
+
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.06);
+  --shadow2: 0 6px 18px rgba(0,0,0,0.06);
+
+  --tap: 44px; /* iPhone tap target */
+}
+
+/* Dark mode via body class (wir bauen gleich einen Toggle) */
+body.dark{
+  --bg: #0b0b0f;
+  --card: rgba(28,28,30,0.78);
+  --cardSolid: #1c1c1e;
+  --text: #f2f2f7;
+  --muted: rgba(235,235,245,0.72);
+  --line: rgba(235,235,245,0.16);
+  --shadow: 0 10px 30px rgba(0,0,0,0.30);
+  --shadow2: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+html,body { height: 100%; }
+body{
+  margin: 0;
+  background: radial-gradient(1000px 600px at 20% -10%, rgba(10,132,255,0.14), transparent 55%),
+              radial-gradient(900px 600px at 95% 0%, rgba(52,199,89,0.10), transparent 50%),
+              var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.container{
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 18px 16px 90px; /* unten Platz für Tabbar */
+}
+
+h1{
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+.sub{
+  margin: 6px 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.card{
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  margin: 12px 0;
+}
+
+.card.solid{
+  background: var(--cardSolid);
+}
+
+.hr { height:1px; background: var(--line); margin: 12px 0; }
+
+.small{ color: var(--muted); font-size: 13px; line-height: 1.35; }
+.muted{ color: var(--muted); }
+
+.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.right{ margin-left:auto; }
+
+label{ display:block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+
+input, select, textarea{
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.55);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+}
+body.dark input, body.dark select, body.dark textarea{
+  background: rgba(255,255,255,0.06);
+}
+
+textarea{ min-height: 92px; }
+
+button{
+  min-height: var(--tap);
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.55);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: var(--shadow2);
+}
+body.dark button{ background: rgba(255,255,255,0.06); }
+button.primary{
+  border-color: rgba(10,132,255,0.35);
+  background: rgba(10,132,255,0.12);
+}
+button.danger{
+  border-color: rgba(255,59,48,0.35);
+  background: rgba(255,59,48,0.12);
+}
+
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.55);
+  color: var(--muted);
+}
+body.dark .pill{ background: rgba(255,255,255,0.06); }
+
+.grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid3{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 900px) { .grid3{ grid-template-columns: 1fr; } .grid2{ grid-template-columns: 1fr; } }
+
+.table{ width:100%; border-collapse: collapse; }
+.table th, .table td{
+  border-bottom: 1px solid var(--line);
+  padding: 10px 8px;
+  vertical-align: top;
+  text-align: left;
+}
+.table th{ font-size: 13px; color: var(--muted); }
+
+.chartWrap{
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px;
+  background: rgba(255,255,255,0.35);
+}
+body.dark .chartWrap{ background: rgba(255,255,255,0.04); }
+
+svg{ width:100%; height: 240px; display:block; }
+
+/* Bottom Tabbar (iPhone Style) */
+.tabs{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 10px 12px 18px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+  display:flex;
+  gap:10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tabbtn{
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.55);
+  font-size: 14px;
+  box-shadow: var(--shadow2);
+}
+body.dark .tabbtn{ background: rgba(255,255,255,0.06); }
+
+.tabbtn.active{
+  border-color: rgba(10,132,255,0.45);
+  background: rgba(10,132,255,0.14);
+  color: var(--text);
+}
+
+/* Tooltip für Charts */
+.tooltip{
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.85);
+  color: var(--text);
+  box-shadow: var(--shadow2);
+  font-size: 13px;
+  max-width: 260px;
+}
+body.dark .tooltip{ background: rgba(28,28,30,0.92); }
   </style>
 </head>
-<body>
+</div><body><div class="container"></div>
   <h1>🚀 RocketCare</h1>
 <p class="sub">Rocket – Welsh Corgi Cardigan</p>
   <p class="sub">Alles läuft offline im Browser (Daten bleiben auf diesem Gerät gespeichert).</p>
@@ -469,6 +646,22 @@
     emergency:"hh_v2_emergency"
   };
 
+// --- Theme (Dark Mode) ---
+const THEME_KEY = "rocketcare_theme"; // "dark" | "light" | null
+
+function applyTheme() {
+  const t = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const useDark = (t === "dark") || (t === null && prefersDark);
+
+  document.body.classList.toggle("dark", useDark);
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.contains("dark");
+  localStorage.setItem(THEME_KEY, isDark ? "light" : "dark");
+  applyTheme();
+}
   // ---------- Helpers ----------
   const $ = (id) => document.getElementById(id);
 
@@ -547,7 +740,7 @@
     { id:"hundeschule", label:"🎓 Hundeschule" },
     { id:"notfall", label:"🆘 Notfallkarte" }
   ];
-
+applyTheme();
   function buildTabs() {
     const wrap = $("tabs");
     wrap.innerHTML = tabs.map(t => `<button class="tabbtn" id="btn_${t.id}" onclick="showTab('${t.id}')">${t.label}</button>`).join("");
