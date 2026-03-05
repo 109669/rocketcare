@@ -1,900 +1,706 @@
 <!doctype html>
 <html lang="de">
-<link rel="apple-touch-icon" href="icon-192.png">
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RocketCare</title>
-<button class="primary" onclick="toggleTheme()" style="margin-top:8px;">🌙 / ☀️ Dark Mode</button>
+  <title>RocketCare</title>
+
+  <!-- iOS Homescreen Icon -->
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <style>
 :root{
-  --bg: #f5f5f7;
-  --card: rgba(255,255,255,0.85);
-  --cardSolid: #ffffff;
-  --text: #111111;
-  --muted: rgba(60,60,67,0.72);
-  --line: rgba(60,60,67,0.18);
-  --accent: #0a84ff;
-  --danger: #ff3b30;
-  --ok: #34c759;
-
-  --radius: 18px;
-  --shadow: 0 10px 30px rgba(0,0,0,0.06);
-  --shadow2: 0 6px 18px rgba(0,0,0,0.06);
-
-  --tap: 44px; /* iPhone tap target */
+  --bg:#f5f5f7;
+  --card:rgba(255,255,255,0.85);
+  --cardSolid:#ffffff;
+  --text:#111111;
+  --muted:rgba(60,60,67,0.72);
+  --line:rgba(60,60,67,0.18);
+  --accent:#0a84ff;
+  --danger:#ff3b30;
+  --ok:#34c759;
+  --radius:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.06);
+  --shadow2:0 6px 18px rgba(0,0,0,0.06);
+  --tap:44px;
 }
-
-/* Dark mode via body class (wir bauen gleich einen Toggle) */
 body.dark{
-  --bg: #0b0b0f;
-  --card: rgba(28,28,30,0.78);
-  --cardSolid: #1c1c1e;
-  --text: #f2f2f7;
-  --muted: rgba(235,235,245,0.72);
-  --line: rgba(235,235,245,0.16);
-  --shadow: 0 10px 30px rgba(0,0,0,0.30);
-  --shadow2: 0 6px 18px rgba(0,0,0,0.25);
+  --bg:#0b0b0f;
+  --card:rgba(28,28,30,0.78);
+  --cardSolid:#1c1c1e;
+  --text:#f2f2f7;
+  --muted:rgba(235,235,245,0.72);
+  --line:rgba(235,235,245,0.16);
+  --shadow:0 10px 30px rgba(0,0,0,0.30);
+  --shadow2:0 6px 18px rgba(0,0,0,0.25);
 }
 
-html,body { height: 100%; }
+html,body{height:100%;}
 body{
-  margin: 0;
+  margin:0;
   background: radial-gradient(1000px 600px at 20% -10%, rgba(10,132,255,0.14), transparent 55%),
               radial-gradient(900px 600px at 95% 0%, rgba(52,199,89,0.10), transparent 50%),
               var(--bg);
-  color: var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  color:var(--text);
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 
+/* Platz oben für Header */
 .container{
-  max-width: 1050px;
-  margin: 0 auto;
-  padding: 18px 16px 90px; /* unten Platz für Tabbar */
+  max-width:1050px;
+  margin:0 auto;
+  padding:74px 16px 24px;
 }
 
-h1{
-  margin: 0;
-  font-size: 28px;
-  letter-spacing: -0.02em;
-}
-.sub{
-  margin: 6px 0 14px;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.35;
-}
+h1{margin:0;font-size:28px;letter-spacing:-0.02em;}
+.sub{margin:6px 0 14px;color:var(--muted);font-size:14px;line-height:1.35;}
 
 .card{
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--shadow);
-  padding: 14px;
-  margin: 12px 0;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:var(--shadow);
+  padding:14px;
+  margin:12px 0;
 }
+.card.solid{background:var(--cardSolid);}
+.hr{height:1px;background:var(--line);margin:12px 0;}
+.small{color:var(--muted);font-size:13px;line-height:1.35;}
+.muted{color:var(--muted);}
 
-.card.solid{
-  background: var(--cardSolid);
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.right{margin-left:auto;}
+
+label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px;}
+
+input,select,textarea{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.55);
+  color:var(--text);
+  font-size:15px;
+  outline:none;
 }
-
-.hr { height:1px; background: var(--line); margin: 12px 0; }
-
-.small{ color: var(--muted); font-size: 13px; line-height: 1.35; }
-.muted{ color: var(--muted); }
-
-.row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-.right{ margin-left:auto; }
-
-label{ display:block; font-size: 13px; color: var(--muted); margin: 0 0 6px; }
-
-input, select, textarea{
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.55);
-  color: var(--text);
-  font-size: 15px;
-  outline: none;
-}
-body.dark input, body.dark select, body.dark textarea{
-  background: rgba(255,255,255,0.06);
-}
-
-textarea{ min-height: 92px; }
+body.dark input,body.dark select,body.dark textarea{background:rgba(255,255,255,0.06);}
+textarea{min-height:92px;}
 
 button{
-  min-height: var(--tap);
-  padding: 10px 14px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.55);
-  color: var(--text);
-  font-size: 15px;
-  cursor: pointer;
-  box-shadow: var(--shadow2);
+  min-height:var(--tap);
+  padding:10px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.55);
+  color:var(--text);
+  font-size:15px;
+  cursor:pointer;
+  box-shadow:var(--shadow2);
 }
-body.dark button{ background: rgba(255,255,255,0.06); }
-button.primary{
-  border-color: rgba(10,132,255,0.35);
-  background: rgba(10,132,255,0.12);
-}
-button.danger{
-  border-color: rgba(255,59,48,0.35);
-  background: rgba(255,59,48,0.12);
-}
+body.dark button{background:rgba(255,255,255,0.06);}
+button.primary{border-color:rgba(10,132,255,0.35);background:rgba(10,132,255,0.12);}
+button.danger{border-color:rgba(255,59,48,0.35);background:rgba(255,59,48,0.12);}
 
 .pill{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.55);
-  color: var(--muted);
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;padding:6px 10px;border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.55);
+  color:var(--muted);
 }
-body.dark .pill{ background: rgba(255,255,255,0.06); }
+body.dark .pill{background:rgba(255,255,255,0.06);}
 
-.grid2{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+@media (max-width:820px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:420px){.grid2{grid-template-columns:1fr;} .grid3{grid-template-columns:1fr;}}
 
-/* erst bei sehr schmalen Geräten 1 Spalte */
-@media (max-width: 420px){
-  .grid2{ grid-template-columns: 1fr; }
-}
-.table{ width:100%; border-collapse: collapse; }
-.table th, .table td{
-  border-bottom: 1px solid var(--line);
-  padding: 10px 8px;
-  vertical-align: top;
-  text-align: left;
-}
-.table th{ font-size: 13px; color: var(--muted); }
+.table{width:100%;border-collapse:collapse;}
+.table th,.table td{border-bottom:1px solid var(--line);padding:10px 8px;vertical-align:top;text-align:left;}
+.table th{font-size:13px;color:var(--muted);}
 
-.chartWrap{
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 10px;
-  background: rgba(255,255,255,0.35);
-}
-body.dark .chartWrap{ background: rgba(255,255,255,0.04); }
+.chartWrap{border:1px solid var(--line);border-radius:var(--radius);padding:10px;background:rgba(255,255,255,0.35);}
+body.dark .chartWrap{background:rgba(255,255,255,0.04);}
+svg{width:100%;height:240px;display:block;}
 
-svg{ width:100%; height: 240px; display:block; }
+/* Accordion in Tabs */
+.big-accordion .accordion-content{display:none;margin-top:12px;}
+.big-accordion.open .accordion-content{display:block;}
+.big-accordion .accordion-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:700;}
+.big-accordion .accordion-arrow{transition:transform .2s ease;opacity:.75;}
+.big-accordion.open .accordion-arrow{transform:rotate(180deg);}
 
-/* Bottom Tabbar (iPhone Style) */
-.tabs{
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  padding: 10px 12px 18px;
-  background: color-mix(in srgb, var(--bg) 70%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid var(--line);
-  display:flex;
-  gap:10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.tabbtn{
-  min-height: var(--tap);
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.55);
-  font-size: 14px;
-  box-shadow: var(--shadow2);
-}
-body.dark .tabbtn{ background: rgba(255,255,255,0.06); }
-
-.tabbtn.active{
-  border-color: rgba(10,132,255,0.45);
-  background: rgba(10,132,255,0.14);
-  color: var(--text);
-}
-
-/* Tooltip für Charts */
-.tooltip{
-  position: fixed;
-  z-index: 9999;
-  pointer-events: none;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.85);
-  color: var(--text);
-  box-shadow: var(--shadow2);
-  font-size: 13px;
-  max-width: 260px;
-}
-.accordion-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.accordion-content{
-  margin-top:10px;
-  display:none;
-}
-
-.accordion.open .accordion-content{
-  display:block;
-}
-body.dark .tooltip{ background: rgba(28,28,30,0.92); }
-
-/* Große Sektionen in Tabs: standardmäßig zu */
-.big-accordion .accordion-content { display: none; margin-top: 12px; }
-.big-accordion.open .accordion-content { display: block; }
-
-.big-accordion .accordion-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  cursor:pointer;
-  font-weight:700;
-}
-
-.big-accordion .accordion-arrow{
-  transition: transform .2s ease;
-  opacity: .75;
-}
-.big-accordion.open .accordion-arrow{ transform: rotate(180deg); }
-/* Platz oben für Header */
-.container{ padding-top: 74px; }
-
-/* Topbar */
+/* Header */
 .topbar{
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 64px;
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  padding: 10px 12px;
-  z-index: 9998;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line);
+  position:fixed;top:0;left:0;right:0;height:64px;
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  z-index:9998;
+  background:color-mix(in srgb,var(--bg) 72%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
 }
-
 .iconbtn{
-  min-height: 44px;
-  min-width: 44px;
-  padding: 0 12px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.55);
-  box-shadow: var(--shadow2);
+  min-height:44px;min-width:44px;padding:0 12px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,0.55);
+  box-shadow:var(--shadow2);
 }
-body.dark .iconbtn{ background: rgba(255,255,255,0.06); }
+body.dark .iconbtn{background:rgba(255,255,255,0.06);}
+.topbar-title{flex:1;min-width:0;}
+.topbar-name{font-weight:800;letter-spacing:-0.02em;}
+.topbar-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-.topbar-title{ flex: 1; min-width: 0; }
-.topbar-name{ font-weight: 800; letter-spacing: -0.02em; }
-.topbar-sub{ font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Drawer + Overlay */
-.overlay{
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 9997;
-  display:none;
-}
-
+/* Drawer */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:9997;display:none;}
 .drawer{
-  position: fixed;
-  top: 0; bottom: 0; left: 0;
-  width: min(320px, 86vw);
-  background: var(--cardSolid);
-  border-right: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  z-index: 9999;
-  transform: translateX(-105%);
-  transition: transform .22s ease;
-  padding: 12px;
-  display:flex;
-  flex-direction: column;
-  gap: 8px;
+  position:fixed;top:0;bottom:0;left:0;width:min(320px,86vw);
+  background:var(--cardSolid);border-right:1px solid var(--line);
+  box-shadow:var(--shadow);z-index:9999;
+  transform:translateX(-105%);transition:transform .22s ease;
+  padding:12px;display:flex;flex-direction:column;gap:8px;
 }
-body.dark .drawer{ background: var(--cardSolid); }
-
-.drawer.open{ transform: translateX(0); }
-.overlay.open{ display:block; }
-
-.drawer-head{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  padding: 6px 2px 10px;
-}
-
+body.dark .drawer{background:var(--cardSolid);}
+.drawer.open{transform:translateX(0);}
+.overlay.open{display:block;}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 10px;}
 .menubtn{
-  width: 100%;
-  text-align: left;
-  min-height: 44px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.55);
-  box-shadow: var(--shadow2);
+  width:100%;text-align:left;min-height:44px;padding:10px 12px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(255,255,255,0.55);box-shadow:var(--shadow2);
 }
-body.dark .menubtn{ background: rgba(255,255,255,0.06); }
+body.dark .menubtn{background:rgba(255,255,255,0.06);}
+.divider{height:1px;background:var(--line);margin:6px 0;}
 
-.divider{ height:1px; background: var(--line); margin: 6px 0; }
-
-/* Tabs verstecken/zeigen */
-.hide { display: none !important; }
+/* Tabs visibility */
+.hide{display:none !important;}
   </style>
 </head>
-</div><body><div class="container">
-  <header class="topbar">
+
+<body>
+<header class="topbar">
   <button class="iconbtn" onclick="openMenu()" aria-label="Menü öffnen">☰</button>
   <div class="topbar-title">
     <div class="topbar-name">RocketCare</div>
-    <div class="topbar-sub">Rocket · Welsh Corgi Cardigan</div>
+    <div class="topbar-sub" id="topbarSub">Rocket · Welsh Corgi Cardigan</div>
   </div>
   <button class="iconbtn" onclick="toggleTheme()" aria-label="Dark Mode">🌙</button>
 </header>
 
 <div id="menuOverlay" class="overlay" onclick="closeMenu()"></div>
-
 <nav id="menuDrawer" class="drawer" aria-label="Navigation">
   <div class="drawer-head">
     <b>Menü</b>
     <button class="iconbtn" onclick="closeMenu()" aria-label="Menü schließen">✕</button>
   </div>
 
-  <button class="menubtn" onclick="go('dashboard')">🏠 Übersicht</button>
-  <button class="menubtn" onclick="go('profil')">🐶 Profil</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('dashboard');">🏠 Übersicht</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('profil');">🐶 Profil</button>
   <div class="divider"></div>
 
-<button class="menubtn" onclick="closeMenu(); showTab('gewicht');">⚖️ Gewicht</button>
-<button class="menubtn" onclick="closeMenu(); showTab('gassi');">🚶 Gassi</button>
-<button class="menubtn" onclick="closeMenu(); showTab('kacki');">💩 Kacki</button>
-<button class="menubtn" onclick="closeMenu(); showTab('futter');">🍽️ Futter</button>
-<button class="menubtn" onclick="closeMenu(); showTab('hundeschule');">🎓 Hundeschule</button>
-<button class="menubtn" onclick="closeMenu(); showTab('notfall');">🆘 Notfallkarte</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('gewicht');">⚖️ Gewicht</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('gassi');">🚶 Gassi</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('kacki');">💩 Kacki</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('futter');">🍽️ Futter</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('hundeschule');">🎓 Hundeschule</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('notfall');">🆘 Notfallkarte</button>
 
   <div class="divider"></div>
-  <button class="menubtn" onclick="go('export')">📦 Export/Backup</button>
+  <button class="menubtn" onclick="closeMenu(); showTab('export');">📦 Export/Backup</button>
 </nav>
-</div>
+
+<div class="container">
   <h1>🚀 RocketCare</h1>
-<p class="sub">Rocket – Welsh Corgi Cardigan</p>
   <p class="sub">Alles läuft offline im Browser (Daten bleiben auf diesem Gerät gespeichert).</p>
 
   <!-- DASHBOARD -->
-<section class="tab card hide" id="tab_gewicht">
+  <section class="tab card" id="tab_dashboard">
+    <div class="row">
+      <span class="pill" id="badge">Status…</span>
+      <span class="pill" id="todayPill">Heute: —</span>
+      <span class="right row">
+        <button onclick="showTab('export')">📦 Export/Backup</button>
+        <button onclick="resetAll()" class="danger">♻️ Alles löschen</button>
+      </span>
+    </div>
 
-  <div class="row">
-    <div class="small" id="dashProfileTxt" style="margin-top:8px;">—</div>
-    <span class="pill" id="badge">Status…</span>
-    <span class="pill" id="todayPill">Heute: —</span>
     <div class="card" style="margin-top:12px;">
-  <div class="row" style="align-items:flex-start;">
-    <img id="dashHeroPhoto" alt="Rocket" style="width:72px;height:72px;border-radius:18px;object-fit:cover;border:1px solid var(--line);" />
+      <div class="row" style="align-items:flex-start;">
+        <img id="dashHeroPhoto" alt="Rocket" style="width:72px;height:72px;border-radius:18px;object-fit:cover;border:1px solid var(--line);" />
+        <div style="flex:1;min-width:200px;">
+          <div class="row" style="gap:8px;">
+            <b id="dashHeroName">Rocket</b>
+            <span class="pill" id="dashHeroAge">—</span>
+          </div>
+          <div class="small" id="dashHeroMeta" style="margin-top:4px;">Welsh Corgi Cardigan</div>
 
-    <div style="flex:1;min-width:200px;">
-      <div class="row" style="gap:8px;">
-        <b id="dashHeroName">Rocket</b>
-        <span class="pill" id="dashHeroAge">—</span>
-      </div>
-      <div class="small" id="dashHeroMeta" style="margin-top:4px;">Welsh Corgi Cardigan</div>
+          <div class="grid3" style="margin-top:10px;">
+            <div class="card" style="margin:0;">
+              <div class="small muted">⚖️ Gewicht</div>
+              <b id="dashHeroWeight">—</b>
+            </div>
+            <div class="card" style="margin:0;">
+              <div class="small muted">🚶 Gassi</div>
+              <b id="dashHeroGassi">—</b>
+            </div>
+            <div class="card" style="margin:0;">
+              <div class="small muted">💩 Kacki</div>
+              <b id="dashHeroKacki">—</b>
+            </div>
+          </div>
 
-      <div class="grid3" style="margin-top:10px;">
-        <div class="card" style="margin:0;">
-          <div class="small muted">⚖️ Gewicht</div>
-          <b id="dashHeroWeight">—</b>
-        </div>
-        <div class="card" style="margin:0;">
-          <div class="small muted">🚶 Gassi</div>
-          <b id="dashHeroGassi">—</b>
-        </div>
-        <div class="card" style="margin:0;">
-          <div class="small muted">💩 Kacki</div>
-          <b id="dashHeroKacki">—</b>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" onclick="showTab('profil')">🐶 Profil öffnen</button>
-      </div>
-    </div>
-  </div>
-</div>
-    <span class="right row">
-      <button onclick="openExport()">📦 Export/Backup</button>
-      <button onclick="resetAll()" class="danger">♻️ Alles löschen</button>
-    </span>
-  </div>
-
-  <div class="hr"></div>
-
-  <div class="grid2">
-
- <div class="grid2">
-
-  <div class="card">
-    <div class="row">
-      <b>⚖️ Gewicht</b>
-      <span class="pill" id="dashWeight">—</span>
-    </div>
-    <div class="small" id="dashWeightTxt">Noch kein Eintrag.</div>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <b>🐕 Letzte Gassi-Note</b>
-      <span class="pill" id="dashGassi">—</span>
-    </div>
-    <div class="small" id="dashGassiTxt">Noch kein Eintrag.</div>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <b>💩 Letzte Kacki-Diagnose</b>
-      <span class="pill" id="dashKacki">—</span>
-    </div>
-    <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <b>🍖 Letzte Mahlzeit</b>
-      <span class="pill" id="dashFood">—</span>
-    </div>
-    <div class="small" id="dashFoodTxt">Noch kein Eintrag.</div>
-  </div>
-
-</div>
-
-<div class="card">
-
-  <div class="row">
-    <b>🚑 Notfallkarte</b>
-    <span class="pill" id="dashEmergency">—</span>
-  </div>
-
-  <div class="small" id="dashEmergencyTxt">Noch nicht ausgefüllt.</div>
-
-  <div class="row" style="margin-top:10px;">
-    <button class="primary" onclick="showTab('notfall')">
-      ➡️ Notfallkarte öffnen
-    </button>
-  </div>
-
-</div>
-</div>
-</section>
-
-
-<!-- ROCKET PROFIL -->
-<section class="tab card hide" id="tab_profil">
-
-  <div class="row">
-    <b>🐶 Rocket – Profil</b>
-    <span class="right row">
-      <button class="primary" onclick="saveProfile()">💾 Speichern</button>
-    </span>
-  </div>
-<div class="card" style="margin-top:12px;">
-  <div class="row" style="align-items:flex-start;">
-    <div style="width:110px;">
-      <img id="p_photo" alt="Rocket" style="width:110px;height:110px;border-radius:18px;object-fit:cover;border:1px solid var(--line);display:block;" />
-    </div>
-
-    <div style="flex:1;min-width:200px;">
-      <label>Foto von Rocket</label>
-      <input id="p_photo_file" type="file" accept="image/*" />
-      <div class="small" style="margin-top:6px;">Tipp: Einmal auswählen, wird lokal gespeichert.</div>
-      <div class="row" style="margin-top:10px;">
-        <button onclick="removePhoto()">🗑️ Foto entfernen</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <b>Überblick</b>
-  <div class="small" id="p_overview" style="margin-top:8px;">—</div>
-</div>
-  <div class="grid2" style="margin-top:10px;">
-    <div>
-      <label>Name</label>
-      <input id="p_name" type="text" value="Rocket" />
-    </div>
-
-    <div>
-      <label>Rasse</label>
-      <input id="p_breed" type="text" value="Welsh Corgi Cardigan" />
-    </div>
-
-    <div>
-      <label>Geburtstag</label>
-      <input id="p_birth" type="date" value="2024-10-18" />
-    </div>
-
-    <div>
-      <label>Zielgewicht (optional, kg)</label>
-      <input id="p_goal" type="text" placeholder="z.B. 13-15" />
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:12px;">
-    <b>Auswertung</b>
-    <div class="small" id="p_ageText" style="margin-top:6px;">Alter: —</div>
-    <div class="small" id="p_goalText" style="margin-top:6px;">Zielgewicht: —</div>
-  </div>
-
-</section>
- 
-
-  <!-- GEWICHT -->
-<section class="tab card hide" id="tab_gewicht">
-  <div class="card big-accordion">
-    <div class="accordion-header" onclick="toggleBigAccordion(this)">
-      <span>⚖️ Gewicht-Logbuch</span>
-      <span class="accordion-arrow">▼</span>
-    </div>
-
-    <div class="accordion-content">
-      <div class="row">
-        <span class="pill" id="weightCount">—</span>
-        <span class="right row">
-          <button onclick="exportSection('weight')">📄 Export</button>
-        </span>
-      </div>
-
-      <div class="grid3" style="margin-top:10px;">
-        <div>
-          <label>Datum & Uhrzeit</label>
-          <input id="w_dt" type="datetime-local" />
-        </div>
-        <div>
-          <label>Gewicht (kg)</label>
-          <input id="w_kg" type="number" step="0.1" placeholder="z.B. 12.4" />
-        </div>
-        <div>
-          <label>Notiz (optional)</label>
-          <input id="w_note" type="text" placeholder="z.B. morgens, nach dem Fressen…" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" onclick="addWeight()">➕ Eintragen</button>
-        <span class="small">Tipp: regelmäßig (z.B. 1× pro Woche) eintragen.</span>
-      </div>
-
-      <div class="card chartWrap" style="margin-top:12px;">
-        <b>Gewichtskurve</b>
-        <div class="small">Je mehr Einträge, desto besser die Kurve.</div>
-        <svg id="weightChart" viewBox="0 0 800 220" aria-label="Gewichtskurve"></svg>
-      </div>
-
-      <div class="card" style="margin-top:12px;">
-        <b>Einträge</b>
-        <div class="small muted">Neueste oben. Du kannst auch löschen.</div>
-        <table class="table" id="weightTable"></table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- GASSI NOTE -->
-<section class="tab card hide" id="tab_gassi">
-  <div class="card big-accordion">
-    <div class="accordion-header" onclick="toggleBigAccordion(this)">
-      <span>🚶 Gassi-Bewertung (Schulnote 1–6)</span>
-      <span class="accordion-arrow">▼</span>
-    </div>
-
-    <div class="accordion-content">
-      <div class="row">
-        <span class="pill" id="gassiCount">—</span>
-        <span class="right row">
-          <button onclick="exportSection('gassi')">📄 Export</button>
-        </span>
-      </div>
-
-      <div class="grid3" style="margin-top:10px;">
-        <div>
-          <label>Datum & Uhrzeit</label>
-          <input id="g_dt" type="datetime-local" />
-        </div>
-        <div>
-          <label>Note (1 = sehr gut, 6 = schlecht)</label>
-          <select id="g_grade">
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-          </select>
-        </div>
-        <div>
-          <label>Notiz (optional)</label>
-          <input id="g_note" type="text" placeholder="z.B. Leinenführigkeit, Begegnungen…" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" onclick="addGassi()">➕ Eintragen</button>
-        <span class="small">Kurve: Note 1 ist oben (besser).</span>
-      </div>
-
-      <div class="card chartWrap" style="margin-top:12px;">
-        <b>Gassi-Noten-Kurve</b>
-        <svg id="gassiChart" viewBox="0 0 800 220" aria-label="Gassi Noten"></svg>
-      </div>
-
-      <div class="card" style="margin-top:12px;">
-        <b>Einträge</b>
-        <table class="table" id="gassiTable"></table>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- KACKI -->
-<section class="tab card hide" id="tab_kacki">
-  <div class="card big-accordion">
-    <div class="accordion-header" onclick="toggleBigAccordion(this)">
-      <span>💩 Kacki-Diagnose</span>
-      <span class="accordion-arrow">▼</span>
-    </div>
-
-    <div class="accordion-content">
-      <div class="row">
-        <span class="pill" id="kackiCount">—</span>
-        <span class="right row">
-          <button onclick="exportSection('kacki')">📄 Export</button>
-        </span>
-      </div>
-
-      <div class="grid3" style="margin-top:10px;">
-        <div>
-          <label>Datum & Uhrzeit</label>
-          <input id="k_dt" type="datetime-local" />
-        </div>
-        <div>
-          <label>Konsistenz (Bristol 1–7)</label>
-          <select id="k_bristol">
-            <option value="1">1 (sehr hart)</option>
-            <option value="2">2</option>
-            <option value="3">3 (gut)</option>
-            <option value="4" selected>4 (ideal)</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7 (sehr flüssig)</option>
-          </select>
-        </div>
-        <div>
-          <label>Farbe</label>
-          <select id="k_color">
-            <option>braun</option>
-            <option>hellbraun</option>
-            <option>dunkel</option>
-            <option>gelblich</option>
-            <option>grünlich</option>
-            <option>schwarz</option>
-            <option>rot (Blut?)</option>
-            <option>grau/weißlich</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid2" style="margin-top:10px;">
-        <div>
-          <label>Extras</label>
-          <div class="row">
-            <label class="pill"><input type="checkbox" id="k_mucus" /> Schleim</label>
-            <label class="pill"><input type="checkbox" id="k_blood" /> Blut</label>
-            <label class="pill"><input type="checkbox" id="k_worms" /> Würmer/Teile</label>
-            <label class="pill"><input type="checkbox" id="k_grass" /> Gras/Fremd</label>
+          <div class="row" style="margin-top:10px;">
+            <button class="primary" onclick="showTab('profil')">🐶 Profil öffnen</button>
           </div>
         </div>
-        <div>
-          <label>Notiz (optional)</label>
-          <input id="k_note" type="text" placeholder="z.B. direkt nach Futterwechsel…" />
-        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="grid2">
+      <div class="card" style="margin:0;">
+        <div class="row"><b>⚖️ Gewicht</b> <span class="pill" id="dashWeight">—</span></div>
+        <div class="small" id="dashWeightTxt">Noch kein Eintrag.</div>
       </div>
 
+      <div class="card" style="margin:0;">
+        <div class="row"><b>🐕 Letzte Gassi-Note</b> <span class="pill" id="dashGassi">—</span></div>
+        <div class="small" id="dashGassiTxt">Noch kein Eintrag.</div>
+      </div>
+
+      <div class="card" style="margin:0;">
+        <div class="row"><b>💩 Letzte Kacki-Diagnose</b> <span class="pill" id="dashKacki">—</span></div>
+        <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
+      </div>
+
+      <div class="card" style="margin:0;">
+        <div class="row"><b>🍖 Letzte Mahlzeit</b> <span class="pill" id="dashFood">—</span></div>
+        <div class="small" id="dashFoodTxt">Noch kein Eintrag.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><b>🚑 Notfallkarte</b> <span class="pill" id="dashEmergency">—</span></div>
+      <div class="small" id="dashEmergencyTxt">Noch nicht ausgefüllt.</div>
       <div class="row" style="margin-top:10px;">
-        <button class="primary" onclick="addKacki()">➕ Eintragen</button>
-        <span class="small">Wenn Blut/Schwarz + krank wirkt: Tierarzt kontaktieren.</span>
-      </div>
-
-      <div class="card" style="margin-top:12px;">
-        <b>Einträge</b>
-        <table class="table" id="kackiTable"></table>
+        <button class="primary" onclick="showTab('notfall')">➡️ Notfallkarte öffnen</button>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FUTTER -->
-<section class="tab card hide" id="tab_futter">
-  <div class="card big-accordion">
-    <div class="accordion-header" onclick="toggleBigAccordion(this)">
-      <span>🍽️ Futter-Logbuch</span>
-      <span class="accordion-arrow">▼</span>
+  <!-- ROCKET PROFIL -->
+  <section class="tab card hide" id="tab_profil">
+    <div class="row">
+      <b>🐶 Rocket – Profil</b>
+      <span class="right row">
+        <button class="primary" onclick="saveProfile()">💾 Speichern</button>
+      </span>
     </div>
 
-    <div class="accordion-content">
-      <div class="row">
-        <span class="pill" id="foodCount">—</span>
-        <span class="right row">
-          <button onclick="exportSection('food')">📄 Export</button>
-        </span>
-      </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="row" style="align-items:flex-start;">
+        <div style="width:110px;">
+          <img id="p_photo" alt="Rocket" style="width:110px;height:110px;border-radius:18px;object-fit:cover;border:1px solid var(--line);display:block;" />
+        </div>
 
-      <div class="grid3" style="margin-top:10px;">
-        <div>
-          <label>Datum & Uhrzeit</label>
-          <input id="f_dt" type="datetime-local" />
+        <div style="flex:1;min-width:200px;">
+          <label>Foto von Rocket</label>
+          <input id="p_photo_file" type="file" accept="image/*" />
+          <div class="small" style="margin-top:6px;">Tipp: Einmal auswählen, wird lokal gespeichert.</div>
+          <div class="row" style="margin-top:10px;">
+            <button onclick="removePhoto()">🗑️ Foto entfernen</button>
+          </div>
         </div>
-        <div>
-          <label>Futtermenge (g)</label>
-          <input id="f_amount" type="number" step="1" placeholder="z.B. 180" />
-        </div>
-        <div>
-          <label>Futter (Name/Sorte)</label>
-          <input id="f_food" type="text" placeholder="z.B. Rind, Trockenfutter XYZ…" />
-        </div>
-      </div>
-
-      <div class="grid2" style="margin-top:10px;">
-        <div>
-          <label>Supplements (optional)</label>
-          <input id="f_supp" type="text" placeholder="z.B. Lachsöl, Gelenk-Pulver…" />
-        </div>
-        <div>
-          <label>Notiz (optional)</label>
-          <input id="f_note" type="text" placeholder="z.B. gut gefressen / wenig Appetit…" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" onclick="addFood()">➕ Eintragen</button>
-        <span class="small">Du kannst pro Mahlzeit einen Eintrag machen.</span>
-      </div>
-
-      <div class="card" style="margin-top:12px;">
-        <b>Einträge</b>
-        <table class="table" id="foodTable"></table>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- HUNDESCHULE -->
-<section class="tab card hide" id="tab_hundeschule">
-  <div class="card big-accordion">
-    <div class="accordion-header" onclick="toggleBigAccordion(this)">
-      <span>🎓 Hundeschule-Logbuch</span>
-      <span class="accordion-arrow">▼</span>
+    <div class="card">
+      <b>Überblick</b>
+      <div class="small" id="p_overview" style="margin-top:8px;">—</div>
     </div>
 
-    <div class="accordion-content">
-      <div class="row">
-        <span class="pill" id="schoolCount">—</span>
-        <span class="right row">
-          <button onclick="exportSection('school')">📄 Export</button>
-        </span>
+    <div class="grid2" style="margin-top:10px;">
+      <div>
+        <label>Name</label>
+        <input id="p_name" type="text" value="Rocket" />
       </div>
-
-      <div class="grid3" style="margin-top:10px;">
-        <div>
-          <label>Datum & Uhrzeit</label>
-          <input id="s_dt" type="datetime-local" />
-        </div>
-        <div>
-          <label>Kurs / Thema</label>
-          <input id="s_course" type="text" placeholder="z.B. Junghunde, Leinenführigkeit…" />
-        </div>
-        <div>
-          <label>Note (1–6)</label>
-          <select id="s_grade">
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-          </select>
-        </div>
+      <div>
+        <label>Rasse</label>
+        <input id="p_breed" type="text" value="Welsh Corgi Cardigan" />
       </div>
-
-      <div class="grid2" style="margin-top:10px;">
-        <div>
-          <label>Gut gemacht?</label>
-          <select id="s_good">
-            <option value="yes">Ja ✅</option>
-            <option value="no">Nein ❌</option>
-          </select>
-        </div>
-        <div>
-          <label>Notiz (optional)</label>
-          <input id="s_note" type="text" placeholder="z.B. Ablenkung, neue Übung…" />
-        </div>
+      <div>
+        <label>Geburtstag</label>
+        <input id="p_birth" type="date" value="2024-10-18" />
       </div>
-
-      <div class="row" style="margin-top:10px;">
-        <button class="primary" onclick="addSchool()">➕ Eintragen</button>
-        <span class="small">Kurve: Note 1 ist oben (besser).</span>
-      </div>
-
-      <div class="card chartWrap" style="margin-top:12px;">
-        <b>Hundeschule-Noten-Kurve</b>
-        <svg id="schoolChart" viewBox="0 0 800 220" aria-label="Hundeschule Noten"></svg>
-      </div>
-
-      <div class="card" style="margin-top:12px;">
-        <b>Einträge</b>
-        <table class="table" id="schoolTable"></table>
+      <div>
+        <label>Zielgewicht (optional, kg)</label>
+        <input id="p_goal" type="text" placeholder="z.B. 13-15" />
       </div>
     </div>
-  </div>
-</section>
 
-<!-- NOTFALL -->
-<section class="tab card hide" id="tab_notfall">
-  <div class="card big-accordion">
-    <div class="accordion-header" onclick="toggleBigAccordion(this)">
-      <span>🆘 Notfallkarte</span>
-      <span class="accordion-arrow">▼</span>
+    <div class="card" style="margin-top:12px;">
+      <b>Auswertung</b>
+      <div class="small" id="p_ageText" style="margin-top:6px;">Alter: —</div>
+      <div class="small" id="p_goalText" style="margin-top:6px;">Zielgewicht: —</div>
     </div>
+  </section>
 
-    <div class="accordion-content">
-      <div class="row">
-        <span class="right row">
-          <button class="primary" onclick="saveEmergency()">💾 Speichern</button>
-          <button onclick="exportSection('emergency')">📄 Export</button>
-        </span>
+  <!-- GEWICHT -->
+  <section class="tab card hide" id="tab_gewicht">
+    <div class="card big-accordion">
+      <div class="accordion-header" onclick="toggleBigAccordion(this)">
+        <span>⚖️ Gewicht-Logbuch</span>
+        <span class="accordion-arrow">▼</span>
       </div>
 
-      <div class="grid2" style="margin-top:10px;">
-        <div>
-          <label>Tierarzt / Praxisname</label>
-          <input id="e_name" type="text" placeholder="Name der Praxis" />
+      <div class="accordion-content">
+        <div class="row">
+          <span class="pill" id="weightCount">—</span>
+          <span class="right row">
+            <button onclick="exportSection('weight')">📄 Export</button>
+          </span>
         </div>
-        <div>
-          <label>Telefonnummer</label>
-          <input id="e_phone" type="tel" placeholder="+49 …" />
-        </div>
-        <div>
-          <label>Adresse</label>
-          <input id="e_addr" type="text" placeholder="Straße, PLZ Ort" />
-        </div>
-        <div>
-          <label>Notdienst / 24h (optional)</label>
-          <input id="e_emerg" type="text" placeholder="Notdienst-Nummer / Klinik" />
-        </div>
-      </div>
 
-      <div class="grid2" style="margin-top:10px;">
-        <div>
-          <label>Allergien / Krankheiten / Medis (optional)</label>
-          <textarea id="e_med" placeholder="z.B. Allergie gegen … / nimmt …"></textarea>
+        <div class="grid3" style="margin-top:10px;">
+          <div>
+            <label>Datum & Uhrzeit</label>
+            <input id="w_dt" type="datetime-local" />
+          </div>
+          <div>
+            <label>Gewicht (kg)</label>
+            <input id="w_kg" type="number" step="0.1" placeholder="z.B. 12.4" />
+          </div>
+          <div>
+            <label>Notiz (optional)</label>
+            <input id="w_note" type="text" placeholder="z.B. morgens, nach dem Fressen…" />
+          </div>
         </div>
-        <div>
-          <label>Wichtige Hinweise (optional)</label>
-          <textarea id="e_notes" placeholder="z.B. Chipnummer, Maulkorb vorhanden, Gewicht …"></textarea>
-        </div>
-      </div>
 
-      <div class="small" style="margin-top:10px;">
-        Tipp: Du kannst die Telefonnummer am Handy später direkt anrufen, wenn du diese Datei dort öffnest.
+        <div class="row" style="margin-top:10px;">
+          <button class="primary" onclick="addWeight()">➕ Eintragen</button>
+          <span class="small">Tipp: regelmäßig (z.B. 1× pro Woche) eintragen.</span>
+        </div>
+
+        <div class="card chartWrap" style="margin-top:12px;">
+          <b>Gewichtskurve</b>
+          <div class="small">Je mehr Einträge, desto besser die Kurve.</div>
+          <svg id="weightChart" viewBox="0 0 800 220" aria-label="Gewichtskurve"></svg>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <b>Einträge</b>
+          <div class="small muted">Neueste oben. Du kannst auch löschen.</div>
+          <table class="table" id="weightTable"></table>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- GASSI -->
+  <section class="tab card hide" id="tab_gassi">
+    <div class="card big-accordion">
+      <div class="accordion-header" onclick="toggleBigAccordion(this)">
+        <span>🚶 Gassi-Bewertung (Schulnote 1–6)</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+
+      <div class="accordion-content">
+        <div class="row">
+          <span class="pill" id="gassiCount">—</span>
+          <span class="right row">
+            <button onclick="exportSection('gassi')">📄 Export</button>
+          </span>
+        </div>
+
+        <div class="grid3" style="margin-top:10px;">
+          <div>
+            <label>Datum & Uhrzeit</label>
+            <input id="g_dt" type="datetime-local" />
+          </div>
+          <div>
+            <label>Note (1 = sehr gut, 6 = schlecht)</label>
+            <select id="g_grade">
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            </select>
+          </div>
+          <div>
+            <label>Notiz (optional)</label>
+            <input id="g_note" type="text" placeholder="z.B. Leinenführigkeit, Begegnungen…" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="primary" onclick="addGassi()">➕ Eintragen</button>
+          <span class="small">Kurve: Note 1 ist oben (besser).</span>
+        </div>
+
+        <div class="card chartWrap" style="margin-top:12px;">
+          <b>Gassi-Noten-Kurve</b>
+          <svg id="gassiChart" viewBox="0 0 800 220" aria-label="Gassi Noten"></svg>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <b>Einträge</b>
+          <table class="table" id="gassiTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KACKI -->
+  <section class="tab card hide" id="tab_kacki">
+    <div class="card big-accordion">
+      <div class="accordion-header" onclick="toggleBigAccordion(this)">
+        <span>💩 Kacki-Diagnose</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+
+      <div class="accordion-content">
+        <div class="row">
+          <span class="pill" id="kackiCount">—</span>
+          <span class="right row">
+            <button onclick="exportSection('kacki')">📄 Export</button>
+          </span>
+        </div>
+
+        <div class="grid3" style="margin-top:10px;">
+          <div>
+            <label>Datum & Uhrzeit</label>
+            <input id="k_dt" type="datetime-local" />
+          </div>
+          <div>
+            <label>Konsistenz (Bristol 1–7)</label>
+            <select id="k_bristol">
+              <option value="1">1 (sehr hart)</option>
+              <option value="2">2</option>
+              <option value="3">3 (gut)</option>
+              <option value="4" selected>4 (ideal)</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7 (sehr flüssig)</option>
+            </select>
+          </div>
+          <div>
+            <label>Farbe</label>
+            <select id="k_color">
+              <option>braun</option>
+              <option>hellbraun</option>
+              <option>dunkel</option>
+              <option>gelblich</option>
+              <option>grünlich</option>
+              <option>schwarz</option>
+              <option>rot (Blut?)</option>
+              <option>grau/weißlich</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px;">
+          <div>
+            <label>Extras</label>
+            <div class="row">
+              <label class="pill"><input type="checkbox" id="k_mucus" /> Schleim</label>
+              <label class="pill"><input type="checkbox" id="k_blood" /> Blut</label>
+              <label class="pill"><input type="checkbox" id="k_worms" /> Würmer/Teile</label>
+              <label class="pill"><input type="checkbox" id="k_grass" /> Gras/Fremd</label>
+            </div>
+          </div>
+          <div>
+            <label>Notiz (optional)</label>
+            <input id="k_note" type="text" placeholder="z.B. direkt nach Futterwechsel…" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="primary" onclick="addKacki()">➕ Eintragen</button>
+          <span class="small">Wenn Blut/Schwarz + krank wirkt: Tierarzt kontaktieren.</span>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <b>Einträge</b>
+          <table class="table" id="kackiTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUTTER -->
+  <section class="tab card hide" id="tab_futter">
+    <div class="card big-accordion">
+      <div class="accordion-header" onclick="toggleBigAccordion(this)">
+        <span>🍽️ Futter-Logbuch</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+
+      <div class="accordion-content">
+        <div class="row">
+          <span class="pill" id="foodCount">—</span>
+          <span class="right row">
+            <button onclick="exportSection('food')">📄 Export</button>
+          </span>
+        </div>
+
+        <div class="grid3" style="margin-top:10px;">
+          <div>
+            <label>Datum & Uhrzeit</label>
+            <input id="f_dt" type="datetime-local" />
+          </div>
+          <div>
+            <label>Futtermenge (g)</label>
+            <input id="f_amount" type="number" step="1" placeholder="z.B. 180" />
+          </div>
+          <div>
+            <label>Futter (Name/Sorte)</label>
+            <input id="f_food" type="text" placeholder="z.B. Rind, Trockenfutter XYZ…" />
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px;">
+          <div>
+            <label>Supplements (optional)</label>
+            <input id="f_supp" type="text" placeholder="z.B. Lachsöl, Gelenk-Pulver…" />
+          </div>
+          <div>
+            <label>Notiz (optional)</label>
+            <input id="f_note" type="text" placeholder="z.B. gut gefressen / wenig Appetit…" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="primary" onclick="addFood()">➕ Eintragen</button>
+          <span class="small">Du kannst pro Mahlzeit einen Eintrag machen.</span>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <b>Einträge</b>
+          <table class="table" id="foodTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HUNDESCHULE -->
+  <section class="tab card hide" id="tab_hundeschule">
+    <div class="card big-accordion">
+      <div class="accordion-header" onclick="toggleBigAccordion(this)">
+        <span>🎓 Hundeschule-Logbuch</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+
+      <div class="accordion-content">
+        <div class="row">
+          <span class="pill" id="schoolCount">—</span>
+          <span class="right row">
+            <button onclick="exportSection('school')">📄 Export</button>
+          </span>
+        </div>
+
+        <div class="grid3" style="margin-top:10px;">
+          <div>
+            <label>Datum & Uhrzeit</label>
+            <input id="s_dt" type="datetime-local" />
+          </div>
+          <div>
+            <label>Kurs / Thema</label>
+            <input id="s_course" type="text" placeholder="z.B. Junghunde, Leinenführigkeit…" />
+          </div>
+          <div>
+            <label>Note (1–6)</label>
+            <select id="s_grade">
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px;">
+          <div>
+            <label>Gut gemacht?</label>
+            <select id="s_good">
+              <option value="yes">Ja ✅</option>
+              <option value="no">Nein ❌</option>
+            </select>
+          </div>
+          <div>
+            <label>Notiz (optional)</label>
+            <input id="s_note" type="text" placeholder="z.B. Ablenkung, neue Übung…" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <button class="primary" onclick="addSchool()">➕ Eintragen</button>
+          <span class="small">Kurve: Note 1 ist oben (besser).</span>
+        </div>
+
+        <div class="card chartWrap" style="margin-top:12px;">
+          <b>Hundeschule-Noten-Kurve</b>
+          <svg id="schoolChart" viewBox="0 0 800 220" aria-label="Hundeschule Noten"></svg>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <b>Einträge</b>
+          <table class="table" id="schoolTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTFALL -->
+  <section class="tab card hide" id="tab_notfall">
+    <div class="card big-accordion">
+      <div class="accordion-header" onclick="toggleBigAccordion(this)">
+        <span>🆘 Notfallkarte</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+
+      <div class="accordion-content">
+        <div class="row">
+          <span class="right row">
+            <button class="primary" onclick="saveEmergency()">💾 Speichern</button>
+            <button onclick="exportSection('emergency')">📄 Export</button>
+          </span>
+        </div>
+
+        <div class="grid2" style="margin-top:10px;">
+          <div>
+            <label>Tierarzt / Praxisname</label>
+            <input id="e_name" type="text" placeholder="Name der Praxis" />
+          </div>
+          <div>
+            <label>Telefonnummer</label>
+            <input id="e_phone" type="tel" placeholder="+49 …" />
+          </div>
+          <div>
+            <label>Adresse</label>
+            <input id="e_addr" type="text" placeholder="Straße, PLZ Ort" />
+          </div>
+          <div>
+            <label>Notdienst / 24h (optional)</label>
+            <input id="e_emerg" type="text" placeholder="Notdienst-Nummer / Klinik" />
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px;">
+          <div>
+            <label>Allergien / Krankheiten / Medis (optional)</label>
+            <textarea id="e_med" placeholder="z.B. Allergie gegen … / nimmt …"></textarea>
+          </div>
+          <div>
+            <label>Wichtige Hinweise (optional)</label>
+            <textarea id="e_notes" placeholder="z.B. Chipnummer, Maulkorb vorhanden, Gewicht …"></textarea>
+          </div>
+        </div>
+
+        <div class="small" style="margin-top:10px;">
+          Tipp: Du kannst die Telefonnummer am Handy später direkt anrufen (zum Beispiel aus dieser Ansicht heraus kopieren).
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- EXPORT / IMPORT -->
   <section class="tab card hide" id="tab_export">
@@ -913,185 +719,72 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
       Achtung: Wiederherstellen überschreibt die aktuellen Daten in diesem Browser.
     </div>
   </section>
+</div>
 
 <script>
-  function getLast(arr){
-  return (Array.isArray(arr) && arr.length) ? arr[arr.length - 1] : null;
-}
-
-function safeLoadArr(key){
-  try { return loadArr(key); } catch { return []; }
-}
-function safeLoadObj(key){
-  try { return loadObj(key); } catch { return null; }
-}
-
-// versucht sowohl BASE_KEYS.* als auch K.*
-function keyOf(name){
-  if (typeof BASE_KEYS !== "undefined" && BASE_KEYS[name]) return BASE_KEYS[name];
-  if (typeof K !== "undefined" && K[name]) return K[name];
-  return null;
-}
-
-function renderDashHero(){
-  // Profil
-  const p = (typeof loadProfile === "function" ? loadProfile() : null) || safeLoadObj(keyOf("profile")) || {
-    name: "Rocket",
-    breed: "Welsh Corgi Cardigan",
-    birth: "2024-10-18",
-    goal: ""
-  };
-
-  // Foto
-  const img = document.getElementById("dashHeroPhoto");
-  if (img) {
-    img.src = p.photo || "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
-         <rect width='100%' height='100%' fill='#d9d9df'/>
-         <text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle'
-           font-family='system-ui' font-size='22' fill='#555'>Rocket</text>
-       </svg>`
-    );
-  }
-
-  // Name / Rasse / Alter
-  const nameEl = document.getElementById("dashHeroName");
-  if (nameEl) nameEl.textContent = p.name || "Rocket";
-
-  const metaEl = document.getElementById("dashHeroMeta");
-  if (metaEl) metaEl.textContent = p.breed || "—";
-
-  const ageEl = document.getElementById("dashHeroAge");
-  if (ageEl) {
-    const ageTxt = (typeof calcAgeText === "function") ? calcAgeText(p.birth) : (p.birth || "—");
-    ageEl.textContent = ageTxt;
-  }
-
-  // Letzte Werte aus den Logbüchern
-  const wKey = keyOf("weight");
-  const gKey = keyOf("gassi");
-  const kKey = keyOf("kacki");
-
-  const wLast = getLast(safeLoadArr(wKey));
-  const gLast = getLast(safeLoadArr(gKey));
-  const kLast = getLast(safeLoadArr(kKey));
-
-  const wEl = document.getElementById("dashHeroWeight");
-  if (wEl) wEl.textContent = wLast?.kg ? `${Number(wLast.kg).toFixed(1)} kg` : "—";
-
-  const gEl = document.getElementById("dashHeroGassi");
-  if (gEl) gEl.textContent = gLast?.grade ? `Note ${gLast.grade}` : "—";
-
-  const kEl = document.getElementById("dashHeroKacki");
-  if (kEl) {
-    // zeigt Bristol + Farbe kompakt, falls vorhanden
-    const br = kLast?.bristol ? `B${kLast.bristol}` : "";
-    const col = kLast?.color ? `${kLast.color}` : "";
-    const txt = (br || col) ? `${br}${br && col ? " · " : ""}${col}` : "—";
-    kEl.textContent = txt;
-  }
-}
-  // ---------- Storage Keys ----------
+  // ---------- Keys ----------
   const K = {
-    profile: "hh_v2_profile",
-    weight: "hh_v2_weight",
-    gassi: "hh_v2_gassi",
-    kacki: "hh_v2_kacki",
-    food:  "hh_v2_food",
-    school:"hh_v2_school",
-    emergency:"hh_v2_emergency"
+    profile: "hh_v3_profile",
+    weight: "hh_v3_weight",
+    gassi: "hh_v3_gassi",
+    kacki: "hh_v3_kacki",
+    food:  "hh_v3_food",
+    school:"hh_v3_school",
+    emergency:"hh_v3_emergency"
   };
-function wireProfilePhoto(){
-  const inp = document.getElementById("p_photo_file");
-  if (!inp || inp.dataset.bound === "1") return;
-  inp.dataset.bound = "1";
 
-  inp.addEventListener("change", () => {
-    const file = inp.files && inp.files[0];
-    if (!file) return;
+  // ---------- Theme ----------
+  const THEME_KEY = "rocketcare_theme";
+  function applyTheme() {
+    const t = localStorage.getItem(THEME_KEY);
+    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const useDark = (t === "dark") || (t === null && prefersDark);
+    document.body.classList.toggle("dark", useDark);
+  }
+  function toggleTheme() {
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem(THEME_KEY, isDark ? "light" : "dark");
+    applyTheme();
+  }
 
-    const r = new FileReader();
-    r.onload = () => {
-      const p = loadProfile() || {};
-      p.photo = r.result; // data URL
-      localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
-      renderProfile();
-      renderHeaderFromProfile();
-    };
-    r.readAsDataURL(file);
-  });
-}
-
-function removePhoto(){
-  const p = loadProfile() || {};
-  delete p.photo;
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
-  renderProfile();
-  renderHeaderFromProfile();
-}
-
-function renderHeaderFromProfile(){
-  const p = loadProfile();
-  const sub = document.querySelector(".topbar-sub");
-  if (sub && p) sub.textContent = `${p.name || "Rocket"} · ${p.breed || "Welsh Corgi Cardigan"}`;
-}
+  // ---------- Menu ----------
   function openMenu(){
-  document.getElementById("menuDrawer")?.classList.add("open");
-  document.getElementById("menuOverlay")?.classList.add("open");
-}
-function closeMenu(){
-  document.getElementById("menuDrawer")?.classList.remove("open");
-  document.getElementById("menuOverlay")?.classList.remove("open");
-}
-function go(tabId){
-  closeMenu();
-  showTab(tabId);
-}
-// --- Theme (Dark Mode) ---
-const THEME_KEY = "rocketcare_theme"; // "dark" | "light" | null
+    document.getElementById("menuDrawer")?.classList.add("open");
+    document.getElementById("menuOverlay")?.classList.add("open");
+  }
+  function closeMenu(){
+    document.getElementById("menuDrawer")?.classList.remove("open");
+    document.getElementById("menuOverlay")?.classList.remove("open");
+  }
 
-function applyTheme() {
-  const t = localStorage.getItem(THEME_KEY);
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const useDark = (t === "dark") || (t === null && prefersDark);
-
-  document.body.classList.toggle("dark", useDark);
-}
-
-function toggleTheme() {
-  const isDark = document.body.classList.contains("dark");
-  localStorage.setItem(THEME_KEY, isDark ? "light" : "dark");
-  applyTheme();
-}
   // ---------- Helpers ----------
   const $ = (id) => document.getElementById(id);
 
   function nowLocalInputValue() {
     const d = new Date();
     const pad = n => String(n).padStart(2,'0');
-    const yyyy = d.getFullYear();
-    const mm = pad(d.getMonth()+1);
-    const dd = pad(d.getDate());
-    const hh = pad(d.getHours());
-    const mi = pad(d.getMinutes());
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
-
   function parseLocalInputToTs(val) {
-    // val like "2026-03-05T18:30"
     if (!val) return Date.now();
     const d = new Date(val);
     const ts = d.getTime();
     return Number.isFinite(ts) ? ts : Date.now();
   }
-
   function fmtDT(ts) {
     const d = new Date(ts);
     return d.toLocaleString("de-DE", { weekday:"short", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
   }
-function toggleBigAccordion(el){
-  el.closest(".big-accordion").classList.toggle("open");
-}
+  function esc(s) {
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+  function isToday(ts) {
+    const d = new Date(ts);
+    const n = new Date();
+    return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+  }
   function msToHuman(ms) {
     if (ms < 0) ms = 0;
     const totalMin = Math.floor(ms / 60000);
@@ -1108,91 +801,155 @@ function toggleBigAccordion(el){
     try { return JSON.parse(localStorage.getItem(key) || "[]"); }
     catch { return []; }
   }
-  function saveArr(key, arr) {
-    localStorage.setItem(key, JSON.stringify(arr));
-  }
-
+  function saveArr(key, arr) { localStorage.setItem(key, JSON.stringify(arr)); }
   function loadObj(key) {
     try { return JSON.parse(localStorage.getItem(key) || "null"); }
     catch { return null; }
   }
-  function saveObj(key, obj) {
-    localStorage.setItem(key, JSON.stringify(obj));
-  }
-
-  function esc(s) {
-    return (s ?? "").toString()
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-  }
-
-  function isToday(ts) {
-    const d = new Date(ts);
-    const n = new Date();
-    return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
-  }
+  function saveObj(key, obj) { localStorage.setItem(key, JSON.stringify(obj)); }
 
   // ---------- Tabs ----------
-  const tabs = [
-    { id:"dashboard", label:"🏠 Übersicht" },
-    { id:"profil", label:"🐶 Rocket" },
-    { id:"gewicht", label:"⚖️ Gewicht" },
-    { id:"gassi", label:"🚶 Gassi-Note" },
-    { id:"kacki", label:"💩 Kacki" },
-    { id:"futter", label:"🍽️ Futter" },
-    { id:"hundeschule", label:"🎓 Hundeschule" },
-    { id:"notfall", label:"🆘 Notfallkarte" }
-  ];
-applyTheme();
-  function buildTabs() {
-    const wrap = $("tabs");
-    wrap.innerHTML = tabs.map(t => `<button class="tabbtn" id="btn_${t.id}" onclick="showTab('${t.id}')">${t.label}</button>`).join("");
-    // export tab hidden from main bar, erreichbar über button
+  function showTab(id){
+    document.querySelectorAll("section.tab").forEach(s => s.classList.add("hide"));
+    const el = document.getElementById("tab_" + id);
+    if (el) el.classList.remove("hide");
+
+    // accordions in the shown tab start closed
+    document.querySelectorAll("#tab_" + id + " .big-accordion.open").forEach(a => a.classList.remove("open"));
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-function showTab(id){
-  // Alle Tabs ausblenden
-  document.querySelectorAll("section.tab").forEach(s => s.classList.add("hide"));
-
-  // Gewählten Tab einblenden
-  const el = document.getElementById("tab_" + id);
-  if (el) el.classList.remove("hide");
-
-  // Große Accordions im Tab geschlossen starten (optional)
-  document.querySelectorAll("#tab_" + id + " .big-accordion.open").forEach(a => a.classList.remove("open"));
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-  // Gewählten Tab zeigen
-  const el = document.getElementById("tab_" + id);
-  if (el) el.classList.remove("hide");
-
-  // Große Accordions im Tab wieder schließen (optional, hält es clean)
-  document.querySelectorAll(".big-accordion.open").forEach(a => a.classList.remove("open"));
-
-  // Nach oben scrollen (iPhone UX)
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-  function openExport() {
-    document.querySelectorAll(".tab").forEach(el => el.classList.add("hide"));
-    $("tab_export").classList.remove("hide");
-    document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
-    renderAll();
+  function toggleBigAccordion(el){
+    el.closest(".big-accordion").classList.toggle("open");
   }
 
-  // ---------- Simple SVG line chart ----------
+  // ---------- Age/Profile ----------
+  function calcAgeText(birthISO) {
+    if (!birthISO) return "—";
+    const b = new Date(birthISO + "T00:00:00");
+    if (!Number.isFinite(b.getTime())) return "—";
+
+    const now = new Date();
+    let years = now.getFullYear() - b.getFullYear();
+    let months = now.getMonth() - b.getMonth();
+    let days = now.getDate() - b.getDate();
+
+    if (days < 0) {
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+      months -= 1;
+    }
+    if (months < 0) { months += 12; years -= 1; }
+    if (years < 0) return "—";
+
+    const yTxt = years === 1 ? "1 Jahr" : `${years} Jahre`;
+    const mTxt = months === 1 ? "1 Monat" : `${months} Monate`;
+    if (years === 0) return `${mTxt}`;
+    return `${yTxt} ${mTxt}`;
+  }
+
+  function loadProfile() {
+    const p = loadObj(K.profile) || {};
+    if (!p.name) p.name = "Rocket";
+    if (!p.breed) p.breed = "Welsh Corgi Cardigan";
+    if (!p.birth) p.birth = "2024-10-18";
+    if (!p.goal) p.goal = "";
+    return p;
+  }
+
+  function saveProfile() {
+    const old = loadProfile();
+    const p = {
+      name: ($("p_name")?.value || "").trim() || "Rocket",
+      breed: ($("p_breed")?.value || "").trim() || "Welsh Corgi Cardigan",
+      birth: ($("p_birth")?.value || "").trim() || "2024-10-18",
+      goal: ($("p_goal")?.value || "").trim(),
+      photo: old.photo || null
+    };
+    saveObj(K.profile, p);
+    alert("Profil gespeichert.");
+    renderProfile();
+    renderDashHero();
+  }
+
+  function wireProfilePhoto(){
+    const inp = $("p_photo_file");
+    if (!inp || inp.dataset.bound === "1") return;
+    inp.dataset.bound = "1";
+    inp.addEventListener("change", () => {
+      const file = inp.files && inp.files[0];
+      if (!file) return;
+      const r = new FileReader();
+      r.onload = () => {
+        const p = loadProfile();
+        p.photo = r.result;
+        saveObj(K.profile, p);
+        renderProfile();
+        renderDashHero();
+      };
+      r.readAsDataURL(file);
+    });
+  }
+
+  function removePhoto(){
+    const p = loadProfile();
+    p.photo = null;
+    saveObj(K.profile, p);
+    renderProfile();
+    renderDashHero();
+  }
+
+  function renderHeaderFromProfile(){
+    const p = loadProfile();
+    const sub = $("topbarSub");
+    if (sub) sub.textContent = `${p.name} · ${p.breed}`;
+  }
+
+  function renderProfile(){
+    const p = loadProfile();
+
+    // inputs
+    if ($("p_name")) $("p_name").value = p.name;
+    if ($("p_breed")) $("p_breed").value = p.breed;
+    if ($("p_birth")) $("p_birth").value = p.birth;
+    if ($("p_goal")) $("p_goal").value = p.goal || "";
+
+    // photo
+    const img = $("p_photo");
+    if (img) {
+      img.src = p.photo || ("data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
+           <rect width='100%' height='100%' fill='#d9d9df'/>
+           <text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle'
+             font-family='system-ui' font-size='22' fill='#555'>Rocket</text>
+         </svg>`
+      ));
+    }
+
+    // texts
+    const ageText = calcAgeText(p.birth);
+    if ($("p_ageText")) $("p_ageText").textContent = `Alter: ${ageText}`;
+    const goal = (p.goal || "").trim();
+    if ($("p_goalText")) $("p_goalText").textContent = goal ? `Zielgewicht: ${goal} kg` : "Zielgewicht: — (optional)";
+
+    const ov = $("p_overview");
+    if (ov) {
+      ov.innerHTML = `<b>${esc(p.name)}</b><br><span class="muted">${esc(p.breed)}</span><br><br>
+        Alter: <b>${esc(ageText)}</b><br>
+        Geburtstag: <b>${esc(p.birth)}</b><br>
+        Zielgewicht: <b>${esc(goal || "—")}</b>`;
+    }
+
+    wireProfilePhoto();
+    renderHeaderFromProfile();
+  }
+
+  // ---------- Charts ----------
   function renderLineChart(svgEl, points, opts) {
-    // points: [{x:ts, y:number}]
-    // opts: { yMin, yMax, invertY=false, yTicks=[...], labelLeft, labelRight }
     svgEl.innerHTML = "";
     const W = 800, H = 220;
     const padL = 54, padR = 18, padT = 16, padB = 32;
-
-    // frame
-    const bg = `<rect x="0" y="0" width="${W}" height="${H}" rx="14" ry="14" fill="transparent" stroke="none"></rect>`;
-    svgEl.insertAdjacentHTML("beforeend", bg);
 
     if (!points || points.length < 2) {
       svgEl.insertAdjacentHTML("beforeend",
@@ -1201,13 +958,13 @@ function showTab(id){
       return;
     }
 
-    const xs = points.map(p=>p.x);
-    const ys = points.map(p=>p.y);
+    const pts = points.slice().sort((a,b)=>a.x-b.x);
+    const xs = pts.map(p=>p.x);
+    const ys = pts.map(p=>p.y);
     const xMin = Math.min(...xs), xMax = Math.max(...xs);
 
     let yMin = opts?.yMin ?? Math.min(...ys);
     let yMax = opts?.yMax ?? Math.max(...ys);
-
     if (yMin === yMax) { yMin -= 1; yMax += 1; }
 
     const plotW = W - padL - padR;
@@ -1216,18 +973,11 @@ function showTab(id){
     const xScale = (x) => padL + ((x - xMin) / (xMax - xMin)) * plotW;
     const yScale = (y) => {
       const t = (y - yMin) / (yMax - yMin);
-      const yy = opts?.invertY ? (padT + t * plotH) : (padT + (1 - t) * plotH);
-      return yy;
+      return opts?.invertY ? (padT + t * plotH) : (padT + (1 - t) * plotH);
     };
 
-    // grid + y labels
     const ticks = opts?.yTicks || 5;
-    let yTickVals = [];
-    if (Array.isArray(ticks)) yTickVals = ticks;
-    else {
-      const n = ticks;
-      for (let i=0;i<=n;i++) yTickVals.push(yMin + (i*(yMax-yMin)/n));
-    }
+    const yTickVals = Array.isArray(ticks) ? ticks : Array.from({length:ticks+1}, (_,i)=>yMin + i*(yMax-yMin)/ticks);
 
     yTickVals.forEach(v=>{
       const y = yScale(v);
@@ -1235,23 +985,14 @@ function showTab(id){
       svgEl.insertAdjacentHTML("beforeend", `<text x="${padL-10}" y="${y+4}" text-anchor="end" font-size="12" fill="#666">${(Math.round(v*10)/10).toString()}</text>`);
     });
 
-    // x labels: start/end
     const xStart = new Date(xMin).toLocaleDateString("de-DE", { day:"2-digit", month:"2-digit" });
     const xEnd = new Date(xMax).toLocaleDateString("de-DE", { day:"2-digit", month:"2-digit" });
     svgEl.insertAdjacentHTML("beforeend", `<text x="${padL}" y="${H-10}" text-anchor="start" font-size="12" fill="#666">${xStart}</text>`);
     svgEl.insertAdjacentHTML("beforeend", `<text x="${W-padR}" y="${H-10}" text-anchor="end" font-size="12" fill="#666">${xEnd}</text>`);
 
-    // path
-    const d = points
-      .sort((a,b)=>a.x-b.x)
-      .map((p,i)=> `${i===0?'M':'L'} ${xScale(p.x).toFixed(2)} ${yScale(p.y).toFixed(2)}`)
-      .join(" ");
+    const d = pts.map((p,i)=>`${i===0?'M':'L'} ${xScale(p.x).toFixed(2)} ${yScale(p.y).toFixed(2)}`).join(" ");
     svgEl.insertAdjacentHTML("beforeend", `<path d="${d}" fill="none" stroke="#222" stroke-width="2.2" />`);
-
-    // dots
-    points.sort((a,b)=>a.x-b.x).forEach(p=>{
-      svgEl.insertAdjacentHTML("beforeend", `<circle cx="${xScale(p.x)}" cy="${yScale(p.y)}" r="3.6" fill="#222" />`);
-    });
+    pts.forEach(p=> svgEl.insertAdjacentHTML("beforeend", `<circle cx="${xScale(p.x)}" cy="${yScale(p.y)}" r="3.6" fill="#222" />`));
   }
 
   // ---------- Weight ----------
@@ -1260,16 +1001,13 @@ function showTab(id){
     const kg = parseFloat($("w_kg").value);
     const note = ($("w_note").value || "").trim();
     if (!Number.isFinite(kg) || kg <= 0) { alert("Bitte ein gültiges Gewicht eingeben."); return; }
-
     const arr = loadArr(K.weight);
     arr.unshift({ ts, kg, note });
     saveArr(K.weight, arr);
-
     $("w_kg").value = "";
     $("w_note").value = "";
     renderAll();
   }
-
   function delWeight(i) {
     const arr = loadArr(K.weight);
     if (!arr[i]) return;
@@ -1278,16 +1016,11 @@ function showTab(id){
     saveArr(K.weight, arr);
     renderAll();
   }
-
   function renderWeight() {
     const arr = loadArr(K.weight);
     $("weightCount").textContent = `${arr.length} Einträge`;
-
-    // chart
     const pts = arr.slice().reverse().map(e => ({ x:e.ts, y:e.kg }));
     renderLineChart($("weightChart"), pts, { yTicks: 5 });
-
-    // table
     const rows = arr.map((e, idx) => `
       <tr>
         <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
@@ -1296,7 +1029,6 @@ function showTab(id){
         <td style="width:90px;"><button onclick="delWeight(${idx})">Löschen</button></td>
       </tr>
     `).join("");
-
     $("weightTable").innerHTML = `
       <tr><th>Datum</th><th>Gewicht</th><th>Notiz</th><th></th></tr>
       ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
@@ -1309,15 +1041,12 @@ function showTab(id){
     const grade = parseInt($("g_grade").value, 10);
     const note = ($("g_note").value || "").trim();
     if (!Number.isFinite(grade) || grade < 1 || grade > 6) { alert("Bitte eine Note 1–6 wählen."); return; }
-
     const arr = loadArr(K.gassi);
     arr.unshift({ ts, grade, note });
     saveArr(K.gassi, arr);
-
     $("g_note").value = "";
     renderAll();
   }
-
   function delGassi(i) {
     const arr = loadArr(K.gassi);
     if (!arr[i]) return;
@@ -1326,14 +1055,11 @@ function showTab(id){
     saveArr(K.gassi, arr);
     renderAll();
   }
-
   function renderGassi() {
     const arr = loadArr(K.gassi);
     $("gassiCount").textContent = `${arr.length} Einträge`;
-
     const pts = arr.slice().reverse().map(e => ({ x:e.ts, y:e.grade }));
     renderLineChart($("gassiChart"), pts, { yMin:1, yMax:6, invertY:true, yTicks:[1,2,3,4,5,6] });
-
     const rows = arr.map((e, idx) => `
       <tr>
         <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
@@ -1342,7 +1068,6 @@ function showTab(id){
         <td style="width:90px;"><button onclick="delGassi(${idx})">Löschen</button></td>
       </tr>
     `).join("");
-
     $("gassiTable").innerHTML = `
       <tr><th>Datum</th><th>Bewertung</th><th>Notiz</th><th></th></tr>
       ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
@@ -1360,16 +1085,13 @@ function showTab(id){
     if ($("k_worms").checked) extras.push("Würmer/Teile");
     if ($("k_grass").checked) extras.push("Gras/Fremd");
     const note = ($("k_note").value || "").trim();
-
     const arr = loadArr(K.kacki);
     arr.unshift({ ts, bristol, color, extras, note });
     saveArr(K.kacki, arr);
-
     $("k_mucus").checked = $("k_blood").checked = $("k_worms").checked = $("k_grass").checked = false;
     $("k_note").value = "";
     renderAll();
   }
-
   function delKacki(i) {
     const arr = loadArr(K.kacki);
     if (!arr[i]) return;
@@ -1378,11 +1100,9 @@ function showTab(id){
     saveArr(K.kacki, arr);
     renderAll();
   }
-
   function renderKacki() {
     const arr = loadArr(K.kacki);
     $("kackiCount").textContent = `${arr.length} Einträge`;
-
     const rows = arr.map((e, idx) => {
       const extraTxt = (e.extras && e.extras.length) ? e.extras.join(", ") : "—";
       const warn = (e.color || "").toLowerCase().includes("schwarz") || (extraTxt.includes("Blut"));
@@ -1395,7 +1115,6 @@ function showTab(id){
         </tr>
       `;
     }).join("");
-
     $("kackiTable").innerHTML = `
       <tr><th>Datum</th><th>Stuhl</th><th>Details</th><th></th></tr>
       ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
@@ -1409,21 +1128,17 @@ function showTab(id){
     const food = ($("f_food").value || "").trim();
     const supp = ($("f_supp").value || "").trim();
     const note = ($("f_note").value || "").trim();
-
     if (!Number.isFinite(amount) || amount <= 0) { alert("Bitte Futtermenge (g) eingeben."); return; }
     if (!food) { alert("Bitte Futter (Name/Sorte) eingeben."); return; }
-
     const arr = loadArr(K.food);
     arr.unshift({ ts, amount, food, supp, note });
     saveArr(K.food, arr);
-
     $("f_amount").value = "";
     $("f_food").value = "";
     $("f_supp").value = "";
     $("f_note").value = "";
     renderAll();
   }
-
   function delFood(i) {
     const arr = loadArr(K.food);
     if (!arr[i]) return;
@@ -1432,11 +1147,9 @@ function showTab(id){
     saveArr(K.food, arr);
     renderAll();
   }
-
   function renderFood() {
     const arr = loadArr(K.food);
     $("foodCount").textContent = `${arr.length} Einträge`;
-
     const rows = arr.map((e, idx) => `
       <tr>
         <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
@@ -1448,7 +1161,6 @@ function showTab(id){
         <td style="width:90px;"><button onclick="delFood(${idx})">Löschen</button></td>
       </tr>
     `).join("");
-
     $("foodTable").innerHTML = `
       <tr><th>Datum</th><th>Mahlzeit</th><th>Details</th><th></th></tr>
       ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
@@ -1462,19 +1174,15 @@ function showTab(id){
     const grade = parseInt($("s_grade").value, 10);
     const good = $("s_good").value;
     const note = ($("s_note").value || "").trim();
-
     if (!course) { alert("Bitte Kurs/Thema eingeben."); return; }
     if (!Number.isFinite(grade) || grade < 1 || grade > 6) { alert("Bitte Note 1–6 wählen."); return; }
-
     const arr = loadArr(K.school);
     arr.unshift({ ts, course, grade, good, note });
     saveArr(K.school, arr);
-
     $("s_course").value = "";
     $("s_note").value = "";
     renderAll();
   }
-
   function delSchool(i) {
     const arr = loadArr(K.school);
     if (!arr[i]) return;
@@ -1483,23 +1191,19 @@ function showTab(id){
     saveArr(K.school, arr);
     renderAll();
   }
-
   function renderSchool() {
     const arr = loadArr(K.school);
     $("schoolCount").textContent = `${arr.length} Einträge`;
-
     const pts = arr.slice().reverse().map(e => ({ x:e.ts, y:e.grade }));
     renderLineChart($("schoolChart"), pts, { yMin:1, yMax:6, invertY:true, yTicks:[1,2,3,4,5,6] });
-
     const rows = arr.map((e, idx) => `
-      <tr class="${e.good==='yes' ? 'ok' : 'danger'}">
+      <tr>
         <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
         <td style="width:220px;"><b>${esc(e.course)}</b><br><span class="muted">Note ${esc(e.grade)} · ${e.good==='yes'?'Ja ✅':'Nein ❌'}</span></td>
         <td>${e.note ? esc(e.note) : '<span class="muted">—</span>'}</td>
         <td style="width:90px;"><button onclick="delSchool(${idx})">Löschen</button></td>
       </tr>
     `).join("");
-
     $("schoolTable").innerHTML = `
       <tr><th>Datum</th><th>Kurs</th><th>Notiz</th><th></th></tr>
       ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
@@ -1521,7 +1225,6 @@ function showTab(id){
     alert("Notfallkarte gespeichert.");
     renderAll();
   }
-
   function renderEmergency() {
     const obj = loadObj(K.emergency) || {};
     $("e_name").value = obj.name || "";
@@ -1535,6 +1238,34 @@ function showTab(id){
   // ---------- Dashboard ----------
   function latest(arr) { return (arr && arr.length) ? arr[0] : null; }
 
+  function renderDashHero(){
+    const p = loadProfile();
+    const img = $("dashHeroPhoto");
+    if (img) {
+      img.src = p.photo || ("data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
+           <rect width='100%' height='100%' fill='#d9d9df'/>
+           <text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle'
+             font-family='system-ui' font-size='22' fill='#555'>Rocket</text>
+         </svg>`
+      ));
+    }
+    if ($("dashHeroName")) $("dashHeroName").textContent = p.name || "Rocket";
+    if ($("dashHeroMeta")) $("dashHeroMeta").textContent = p.breed || "—";
+    if ($("dashHeroAge")) $("dashHeroAge").textContent = calcAgeText(p.birth);
+
+    const w = loadArr(K.weight), g = loadArr(K.gassi), k = loadArr(K.kacki);
+    const lw = latest(w), lg = latest(g), lk = latest(k);
+
+    if ($("dashHeroWeight")) $("dashHeroWeight").textContent = lw?.kg ? `${Number(lw.kg).toFixed(1)} kg` : "—";
+    if ($("dashHeroGassi")) $("dashHeroGassi").textContent = lg?.grade ? `Note ${lg.grade}` : "—";
+    if ($("dashHeroKacki")) {
+      const br = lk?.bristol ? `B${lk.bristol}` : "";
+      const col = lk?.color ? `${lk.color}` : "";
+      $("dashHeroKacki").textContent = (br || col) ? `${br}${br && col ? " · " : ""}${col}` : "—";
+    }
+  }
+
   function renderDashboard() {
     const w = loadArr(K.weight);
     const g = loadArr(K.gassi);
@@ -1547,15 +1278,11 @@ function showTab(id){
     const lg = latest(g);
     const lk = latest(k);
     const lf = latest(f);
-    const ls = latest(s);
 
-    // counts today
     let today = 0;
-    [w,g,k,f,s].forEach(arr => arr.forEach(e => { if (isToday(e.ts)) today++; }));
-
+    [w,g,k,f,s].forEach(arr => arr.forEach(x => { if (isToday(x.ts)) today++; }));
     $("todayPill").textContent = `Heute: ${today} Einträge`;
 
-    // weight
     if (lw) {
       $("dashWeight").textContent = `${lw.kg.toFixed(1)} kg`;
       $("dashWeightTxt").textContent = `${fmtDT(lw.ts)} (${msToHuman(Date.now()-lw.ts)})${lw.note?` · ${lw.note}`:""}`;
@@ -1564,7 +1291,6 @@ function showTab(id){
       $("dashWeightTxt").textContent = "Noch kein Eintrag.";
     }
 
-    // gassi
     if (lg) {
       $("dashGassi").textContent = `Note ${lg.grade}`;
       $("dashGassiTxt").textContent = `${fmtDT(lg.ts)} (${msToHuman(Date.now()-lg.ts)})${lg.note?` · ${lg.note}`:""}`;
@@ -1573,7 +1299,6 @@ function showTab(id){
       $("dashGassiTxt").textContent = "Noch kein Eintrag.";
     }
 
-    // kacki
     if (lk) {
       const extraTxt = (lk.extras && lk.extras.length) ? ` · ${lk.extras.join(", ")}` : "";
       $("dashKacki").textContent = `Bristol ${lk.bristol}`;
@@ -1583,7 +1308,6 @@ function showTab(id){
       $("dashKackiTxt").textContent = "Noch kein Eintrag.";
     }
 
-    // food
     if (lf) {
       $("dashFood").textContent = `${lf.amount} g`;
       $("dashFoodTxt").textContent = `${fmtDT(lf.ts)} (${msToHuman(Date.now()-lf.ts)}) · ${lf.food}${lf.supp?` · Supp: ${lf.supp}`:""}${lf.note?` · ${lf.note}`:""}`;
@@ -1592,7 +1316,6 @@ function showTab(id){
       $("dashFoodTxt").textContent = "Noch kein Eintrag.";
     }
 
-    // emergency
     if (e && (e.name || e.phone)) {
       $("dashEmergency").textContent = "✅ vorhanden";
       const lines = [];
@@ -1606,26 +1329,18 @@ function showTab(id){
       $("dashEmergencyTxt").textContent = "Noch nicht ausgefüllt.";
     }
 
-    // badge (simple)
     let anyWarn = false;
-    // Example: warn if last kacki had blood/black, or last food older than 12h? We'll keep it lightweight.
     if (lk) {
       const hasBlood = (lk.extras||[]).includes("Blut");
       const isBlack = (lk.color||"").toLowerCase().includes("schwarz");
       if (hasBlood || isBlack) anyWarn = true;
     }
     $("badge").textContent = anyWarn ? "⚠️ Achtung (Kacki)" : "✅ Alles ok";
-  
-  const p = loadProfile();
-const dash = document.getElementById("dashProfileTxt");
-if (dash) {
-  dash.textContent = p
-    ? `${p.name} · ${p.breed} · ${calcAgeText(p.birth)}`
-    : "Profil noch nicht gespeichert.";
-}
+
+    renderDashHero();
   }
 
-  // ---------- Export per section ----------
+  // ---------- Export ----------
   function exportSection(which) {
     let text = "";
     if (which === "emergency") {
@@ -1660,16 +1375,17 @@ if (dash) {
     } else {
       text = "Unbekannter Export.";
     }
-    openExport();
+    showTab("export");
     $("backupArea").value = text;
   }
 
   // ---------- Full backup ----------
   function makeBackup() {
     const payload = {
-      version: "hh_v2",
+      version: "rocketcare_v3",
       createdAt: Date.now(),
       data: {
+        profile: loadProfile(),
         weight: loadArr(K.weight),
         gassi: loadArr(K.gassi),
         kacki: loadArr(K.kacki),
@@ -1689,6 +1405,7 @@ if (dash) {
     if (!obj || !obj.data) { alert("Backup-Format nicht erkannt."); return; }
     if (!confirm("Wiederherstellen überschreibt aktuelle Daten. Fortfahren?")) return;
 
+    if (obj.data.profile) saveObj(K.profile, obj.data.profile);
     saveArr(K.weight, Array.isArray(obj.data.weight) ? obj.data.weight : []);
     saveArr(K.gassi, Array.isArray(obj.data.gassi) ? obj.data.gassi : []);
     saveArr(K.kacki, Array.isArray(obj.data.kacki) ? obj.data.kacki : []);
@@ -1710,15 +1427,16 @@ if (dash) {
 
   // ---------- Render all ----------
   function presetDefaults() {
-    $("w_dt").value = nowLocalInputValue();
-    $("g_dt").value = nowLocalInputValue();
-    $("k_dt").value = nowLocalInputValue();
-    $("f_dt").value = nowLocalInputValue();
-    $("s_dt").value = nowLocalInputValue();
+    if ($("w_dt")) $("w_dt").value = nowLocalInputValue();
+    if ($("g_dt")) $("g_dt").value = nowLocalInputValue();
+    if ($("k_dt")) $("k_dt").value = nowLocalInputValue();
+    if ($("f_dt")) $("f_dt").value = nowLocalInputValue();
+    if ($("s_dt")) $("s_dt").value = nowLocalInputValue();
   }
 
   function renderAll() {
     presetDefaults();
+    renderProfile();
     renderDashboard();
     renderWeight();
     renderGassi();
@@ -1726,187 +1444,13 @@ if (dash) {
     renderFood();
     renderSchool();
     renderEmergency();
-    renderProfile();
-    renderDashHero();
-  }
-function renderProfile(){
-  const p = loadProfile() || {};
-
-  const img = document.getElementById("p_photo");
-  if(img && p.photo){
-    img.src = p.photo;
   }
 
-  const overview = document.getElementById("p_overview");
-  if(overview){
-    overview.innerHTML = `
-      <b>${p.name || "Rocket"}</b><br>
-      ${p.breed || ""}<br><br>
-      Geburtstag: ${p.birth || "-"}<br>
-      Zielgewicht: ${p.goal || "-"}
-    `;
-  }
-}
-  // init
-  buildTabs();
+  // ---------- Init ----------
+  applyTheme();
   showTab("dashboard");
   renderAll();
-  setInterval(renderAll, 30_000); // aktualisiert "vor x" auf dem Dashboard
-function calcAgeText(birthISO) {
-  if (!birthISO) return "—";
-  const b = new Date(birthISO + "T00:00:00");
-  if (!Number.isFinite(b.getTime())) return "—";
-
-  const now = new Date();
-  let years = now.getFullYear() - b.getFullYear();
-  let months = now.getMonth() - b.getMonth();
-  let days = now.getDate() - b.getDate();
-
-  if (days < 0) {
-    // Tage "ausleihen" vom Vormonat
-    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    days += prevMonth.getDate();
-    months -= 1;
-  }
-  if (months < 0) {
-    months += 12;
-    years -= 1;
-  }
-  if (years < 0) return "—";
-
-  const yTxt = years === 1 ? "1 Jahr" : `${years} Jahre`;
-  const mTxt = months === 1 ? "1 Monat" : `${months} Monate`;
-  const dTxt = days === 1 ? "1 Tag" : `${days} Tage`;
-
-  // kurz & schön:
-  if (years === 0) return `${mTxt} ${dTxt}`;
-  return `${yTxt} ${mTxt}`;
-}
-
-function loadProfile() {
-  const p = loadObj(BASE_KEYS?.profile ?? K.profile) || {};
-  // Defaults
-  if (!p.name) p.name = "Rocket";
-  if (!p.breed) p.breed = "Welsh Corgi Cardigan";
-  if (!p.birth) p.birth = "2024-10-18";
-  return p;
-}
-
-function renderProfile() {
-  const key = (BASE_KEYS?.profile ?? K.profile);
-  const p = loadObj(key) || { name:"Rocket", breed:"Welsh Corgi Cardigan", birth:"2024-10-18", goal:"" };
-
-  const nameEl = document.getElementById("p_name");
-  const breedEl = document.getElementById("p_breed");
-  const birthEl = document.getElementById("p_birth");
-  const goalEl = document.getElementById("p_goal");
-
-  if (nameEl) nameEl.value = p.name || "Rocket";
-  if (breedEl) breedEl.value = p.breed || "Welsh Corgi Cardigan";
-  if (birthEl) birthEl.value = p.birth || "2024-10-18";
-  if (goalEl) goalEl.value = p.goal || "";
-
-  const ageText = calcAgeText((birthEl?.value) || p.birth);
-  const ageOut = document.getElementById("p_ageText");
-  if (ageOut) ageOut.textContent = `Alter: ${ageText}`;
-
-  const goalOut = document.getElementById("p_goalText");
-  const goal = (goalEl?.value || p.goal || "").trim();
-  goalOut.textContent = goal ? `Zielgewicht: ${goal} kg` : "Zielgewicht: — (optional)";
-}
-
-function saveProfile() {
-  const key = (BASE_KEYS?.profile ?? K.profile);
-  const p = {
-    name: (document.getElementById("p_name")?.value || "").trim() || "Rocket",
-    breed: (document.getElementById("p_breed")?.value || "").trim() || "Welsh Corgi Cardigan",
-    birth: (document.getElementById("p_birth")?.value || "").trim() || "2024-10-18",
-    goal: (document.getElementById("p_goal")?.value || "").trim()
-  };
-  saveObj(key, p);
-  alert("Profil gespeichert.");
-  renderProfile();
-  // Optional: Überschrift dynamisch später
-}
-// --- Profil (Rocket) ---
-const PROFILE_KEY = "rocketcare_profile";
-
-function calcAgeText(birthISO) {
-  if (!birthISO) return "—";
-  const b = new Date(birthISO + "T00:00:00");
-  if (!Number.isFinite(b.getTime())) return "—";
-
-  const now = new Date();
-  let years = now.getFullYear() - b.getFullYear();
-  let months = now.getMonth() - b.getMonth();
-  let days = now.getDate() - b.getDate();
-
-  if (days < 0) {
-    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    days += prevMonth.getDate();
-    months -= 1;
-  }
-  if (months < 0) {
-    months += 12;
-    years -= 1;
-  }
-  if (years < 0) return "—";
-
-  const y = years === 1 ? "1 Jahr" : `${years} Jahre`;
-  const m = months === 1 ? "1 Monat" : `${months} Monate`;
-
-  if (years === 0) return `${m}`;
-  return `${y} ${m}`;
-}
-
-function loadProfile() {
-  try {
-    const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
-    return p || null;
-  } catch {
-    return null;
-  }
-}
-
-function saveProfile() {
-  const p = {
-    name: (document.getElementById("p_name")?.value || "").trim() || "Rocket",
-    breed: (document.getElementById("p_breed")?.value || "").trim() || "Welsh Corgi Cardigan",
-    birth: (document.getElementById("p_birth")?.value || "").trim() || "2024-10-18",
-    goal: (document.getElementById("p_goal")?.value || "").trim()
-  };
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
-  alert("Profil gespeichert ✅");
-  renderProfile();
-  renderDashboard?.(); // falls vorhanden
-}
-
-function renderProfile() {
-  const p = loadProfile() || {
-    name: "Rocket",
-    breed: "Welsh Corgi Cardigan",
-    birth: "2024-10-18",
-    goal: ""
-  };
-
-  const nameEl = document.getElementById("p_name");
-  const breedEl = document.getElementById("p_breed");
-  const birthEl = document.getElementById("p_birth");
-  const goalEl = document.getElementById("p_goal");
-
-  if (nameEl) nameEl.value = p.name;
-  if (breedEl) breedEl.value = p.breed;
-  if (birthEl) birthEl.value = p.birth;
-  if (goalEl) goalEl.value = p.goal || "";
-
-  const ageOut = document.getElementById("p_ageText");
-  if (ageOut) ageOut.textContent = `Alter: ${calcAgeText(p.birth)}`;
-
-  const goalOut = document.getElementById("p_goalText");
-  if (goalOut) goalOut.textContent = p.goal ? `Zielgewicht: ${p.goal} kg` : "Zielgewicht: — (optional)";
-
-  
-}
+  setInterval(renderAll, 30_000);
 </script>
 </body>
 </html>
