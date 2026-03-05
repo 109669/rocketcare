@@ -352,12 +352,12 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
   <button class="menubtn" onclick="go('profil')">🐶 Profil</button>
   <div class="divider"></div>
 
-  <button class="menubtn" onclick="go('gewicht')">⚖️ Gewicht</button>
-  <button class="menubtn" onclick="go('gassi')">🚶 Gassi</button>
-  <button class="menubtn" onclick="go('kacki')">💩 Kacki</button>
-  <button class="menubtn" onclick="go('futter')">🍽️ Futter</button>
-  <button class="menubtn" onclick="go('hundeschule')">🎓 Hundeschule</button>
-  <button class="menubtn" onclick="go('notfall')">🆘 Notfallkarte</button>
+<button class="menubtn" onclick="closeMenu(); showTab('gewicht');">⚖️ Gewicht</button>
+<button class="menubtn" onclick="closeMenu(); showTab('gassi');">🚶 Gassi</button>
+<button class="menubtn" onclick="closeMenu(); showTab('kacki');">💩 Kacki</button>
+<button class="menubtn" onclick="closeMenu(); showTab('futter');">🍽️ Futter</button>
+<button class="menubtn" onclick="closeMenu(); showTab('hundeschule');">🎓 Hundeschule</button>
+<button class="menubtn" onclick="closeMenu(); showTab('notfall');">🆘 Notfallkarte</button>
 
   <div class="divider"></div>
   <button class="menubtn" onclick="go('export')">📦 Export/Backup</button>
@@ -374,6 +374,38 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
     <div class="small" id="dashProfileTxt" style="margin-top:8px;">—</div>
     <span class="pill" id="badge">Status…</span>
     <span class="pill" id="todayPill">Heute: —</span>
+    <div class="card" style="margin-top:12px;">
+  <div class="row" style="align-items:flex-start;">
+    <img id="dashHeroPhoto" alt="Rocket" style="width:72px;height:72px;border-radius:18px;object-fit:cover;border:1px solid var(--line);" />
+
+    <div style="flex:1;min-width:200px;">
+      <div class="row" style="gap:8px;">
+        <b id="dashHeroName">Rocket</b>
+        <span class="pill" id="dashHeroAge">—</span>
+      </div>
+      <div class="small" id="dashHeroMeta" style="margin-top:4px;">Welsh Corgi Cardigan</div>
+
+      <div class="grid3" style="margin-top:10px;">
+        <div class="card" style="margin:0;">
+          <div class="small muted">⚖️ Gewicht</div>
+          <b id="dashHeroWeight">—</b>
+        </div>
+        <div class="card" style="margin:0;">
+          <div class="small muted">🚶 Gassi</div>
+          <b id="dashHeroGassi">—</b>
+        </div>
+        <div class="card" style="margin:0;">
+          <div class="small muted">💩 Kacki</div>
+          <b id="dashHeroKacki">—</b>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="showTab('profil')">🐶 Profil öffnen</button>
+      </div>
+    </div>
+  </div>
+</div>
     <span class="right row">
       <button onclick="openExport()">📦 Export/Backup</button>
       <button onclick="resetAll()" class="danger">♻️ Alles löschen</button>
@@ -449,7 +481,27 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
       <button class="primary" onclick="saveProfile()">💾 Speichern</button>
     </span>
   </div>
+<div class="card" style="margin-top:12px;">
+  <div class="row" style="align-items:flex-start;">
+    <div style="width:110px;">
+      <img id="p_photo" alt="Rocket" style="width:110px;height:110px;border-radius:18px;object-fit:cover;border:1px solid var(--line);display:block;" />
+    </div>
 
+    <div style="flex:1;min-width:200px;">
+      <label>Foto von Rocket</label>
+      <input id="p_photo_file" type="file" accept="image/*" />
+      <div class="small" style="margin-top:6px;">Tipp: Einmal auswählen, wird lokal gespeichert.</div>
+      <div class="row" style="margin-top:10px;">
+        <button onclick="removePhoto()">🗑️ Foto entfernen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <b>Überblick</b>
+  <div class="small" id="p_overview" style="margin-top:8px;">—</div>
+</div>
   <div class="grid2" style="margin-top:10px;">
     <div>
       <label>Name</label>
@@ -854,6 +906,82 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
   </section>
 
 <script>
+  function getLast(arr){
+  return (Array.isArray(arr) && arr.length) ? arr[arr.length - 1] : null;
+}
+
+function safeLoadArr(key){
+  try { return loadArr(key); } catch { return []; }
+}
+function safeLoadObj(key){
+  try { return loadObj(key); } catch { return null; }
+}
+
+// versucht sowohl BASE_KEYS.* als auch K.*
+function keyOf(name){
+  if (typeof BASE_KEYS !== "undefined" && BASE_KEYS[name]) return BASE_KEYS[name];
+  if (typeof K !== "undefined" && K[name]) return K[name];
+  return null;
+}
+
+function renderDashHero(){
+  // Profil
+  const p = (typeof loadProfile === "function" ? loadProfile() : null) || safeLoadObj(keyOf("profile")) || {
+    name: "Rocket",
+    breed: "Welsh Corgi Cardigan",
+    birth: "2024-10-18",
+    goal: ""
+  };
+
+  // Foto
+  const img = document.getElementById("dashHeroPhoto");
+  if (img) {
+    img.src = p.photo || "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>
+         <rect width='100%' height='100%' fill='#d9d9df'/>
+         <text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle'
+           font-family='system-ui' font-size='22' fill='#555'>Rocket</text>
+       </svg>`
+    );
+  }
+
+  // Name / Rasse / Alter
+  const nameEl = document.getElementById("dashHeroName");
+  if (nameEl) nameEl.textContent = p.name || "Rocket";
+
+  const metaEl = document.getElementById("dashHeroMeta");
+  if (metaEl) metaEl.textContent = p.breed || "—";
+
+  const ageEl = document.getElementById("dashHeroAge");
+  if (ageEl) {
+    const ageTxt = (typeof calcAgeText === "function") ? calcAgeText(p.birth) : (p.birth || "—");
+    ageEl.textContent = ageTxt;
+  }
+
+  // Letzte Werte aus den Logbüchern
+  const wKey = keyOf("weight");
+  const gKey = keyOf("gassi");
+  const kKey = keyOf("kacki");
+
+  const wLast = getLast(safeLoadArr(wKey));
+  const gLast = getLast(safeLoadArr(gKey));
+  const kLast = getLast(safeLoadArr(kKey));
+
+  const wEl = document.getElementById("dashHeroWeight");
+  if (wEl) wEl.textContent = wLast?.kg ? `${Number(wLast.kg).toFixed(1)} kg` : "—";
+
+  const gEl = document.getElementById("dashHeroGassi");
+  if (gEl) gEl.textContent = gLast?.grade ? `Note ${gLast.grade}` : "—";
+
+  const kEl = document.getElementById("dashHeroKacki");
+  if (kEl) {
+    // zeigt Bristol + Farbe kompakt, falls vorhanden
+    const br = kLast?.bristol ? `B${kLast.bristol}` : "";
+    const col = kLast?.color ? `${kLast.color}` : "";
+    const txt = (br || col) ? `${br}${br && col ? " · " : ""}${col}` : "—";
+    kEl.textContent = txt;
+  }
+}
   // ---------- Storage Keys ----------
   const K = {
     profile: "hh_v2_profile",
@@ -864,7 +992,40 @@ body.dark .menubtn{ background: rgba(255,255,255,0.06); }
     school:"hh_v2_school",
     emergency:"hh_v2_emergency"
   };
+function wireProfilePhoto(){
+  const inp = document.getElementById("p_photo_file");
+  if (!inp || inp.dataset.bound === "1") return;
+  inp.dataset.bound = "1";
 
+  inp.addEventListener("change", () => {
+    const file = inp.files && inp.files[0];
+    if (!file) return;
+
+    const r = new FileReader();
+    r.onload = () => {
+      const p = loadProfile() || {};
+      p.photo = r.result; // data URL
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+      renderProfile();
+      renderHeaderFromProfile();
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function removePhoto(){
+  const p = loadProfile() || {};
+  delete p.photo;
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+  renderProfile();
+  renderHeaderFromProfile();
+}
+
+function renderHeaderFromProfile(){
+  const p = loadProfile();
+  const sub = document.querySelector(".topbar-sub");
+  if (sub && p) sub.textContent = `${p.name || "Rocket"} · ${p.breed || "Welsh Corgi Cardigan"}`;
+}
   function openMenu(){
   document.getElementById("menuDrawer")?.classList.add("open");
   document.getElementById("menuOverlay")?.classList.add("open");
@@ -980,17 +1141,20 @@ applyTheme();
     // export tab hidden from main bar, erreichbar über button
   }
 
-  function showTab(id) {
-    document.querySelectorAll(".tab").forEach(el => el.classList.add("hide"));
-    $("tab_"+id).classList.remove("hide");
+ function showTab(id){
+  // Alle Tabs verstecken
+  document.querySelectorAll("section.tab").forEach(s => s.classList.add("hide"));
 
-    document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
-    const btn = $("btn_"+id);
-    if (btn) btn.classList.add("active");
+  // Gewählten Tab zeigen
+  const el = document.getElementById("tab_" + id);
+  if (el) el.classList.remove("hide");
 
-    if (id === "export") { /* no tab button */ }
-    renderAll(); // refresh when switching
-  }
+  // Große Accordions im Tab wieder schließen (optional, hält es clean)
+  document.querySelectorAll(".big-accordion.open").forEach(a => a.classList.remove("open"));
+
+  // Nach oben scrollen (iPhone UX)
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
   function openExport() {
     document.querySelectorAll(".tab").forEach(el => el.classList.add("hide"));
@@ -1544,8 +1708,26 @@ if (dash) {
     renderSchool();
     renderEmergency();
     renderProfile();
+    renderDashHero();
+  }
+function renderProfile(){
+  const p = loadProfile() || {};
+
+  const img = document.getElementById("p_photo");
+  if(img && p.photo){
+    img.src = p.photo;
   }
 
+  const overview = document.getElementById("p_overview");
+  if(overview){
+    overview.innerHTML = `
+      <b>${p.name || "Rocket"}</b><br>
+      ${p.breed || ""}<br><br>
+      Geburtstag: ${p.birth || "-"}<br>
+      Zielgewicht: ${p.goal || "-"}
+    `;
+  }
+}
   // init
   buildTabs();
   showTab("dashboard");
