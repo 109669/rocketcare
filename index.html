@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RocketCare</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Arial, sans-serif; margin: 18px; max-width: 1050px; }
+    h1 { margin: 0 0 6px; }
+    .sub { margin: 0 0 14px; color: #444; }
+    .tabs { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0 14px; }
+    .tabbtn { padding:10px 12px; border-radius: 999px; border:1px solid #ccc; background:#f7f7f7; cursor:pointer; }
+    .tabbtn.active { background:#fff; border-color:#bbb; }
+    .card { border: 1px solid #ddd; border-radius: 16px; padding: 14px; margin: 12px 0; background:#fff; }
+    .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .grid3 { grid-template-columns: 1fr; } .grid2 { grid-template-columns: 1fr; } }
+    label { display:block; font-size: 13px; color:#444; margin-bottom: 4px; }
+    input, select, textarea { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 12px; border: 1px solid #ccc; font-size: 14px; }
+    textarea { min-height: 84px; }
+    button { padding: 10px 12px; border-radius: 12px; border:1px solid #ccc; background:#f7f7f7; cursor:pointer; }
+    button.primary { background:#fff; border-color:#bbb; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .small { color:#666; font-size: 13px; line-height: 1.35; }
+    .pill { display:inline-block; font-size:12px; padding: 3px 8px; border:1px solid #ddd; border-radius: 999px; color:#444; background:#fafafa; }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th, .table td { border-bottom: 1px dashed #eee; padding: 10px 8px; text-align: left; vertical-align: top; }
+    .table th { font-size: 13px; color:#444; }
+    .muted { color:#666; }
+    .danger { background:#fff2f2; border-color:#ffd1d1; }
+    .ok { background:#f3fff3; border-color:#d7f0d7; }
+    .hide { display:none; }
+    .chartWrap { border:1px solid #eee; border-radius: 14px; padding: 10px; background:#fafafa; }
+    svg { width: 100%; height: 210px; display:block; }
+    .hr { height:1px; background:#eee; margin: 10px 0; }
+    pre { white-space: pre-wrap; word-break: break-word; background:#fafafa; border:1px solid #eee; padding:12px; border-radius:12px; }
+    .right { margin-left:auto; }
+  </style>
+</head>
+<body>
+  <h1>🚀 RocketCare</h1>
+<p class="sub">Rocket – Welsh Corgi Cardigan</p>
+  <p class="sub">Alles läuft offline im Browser (Daten bleiben auf diesem Gerät gespeichert).</p>
+
+  <div class="tabs" id="tabs"></div>
+
+  <!-- DASHBOARD -->
+  <section class="tab card" id="tab_dashboard">
+    <div class="row">
+      <span class="pill" id="badge">Status…</span>
+      <span class="pill" id="todayPill">Heute: —</span>
+      <span class="right row">
+        <button onclick="openExport()">📦 Export/Backup</button>
+        <button onclick="resetAll()" class="danger">♻️ Alles löschen</button>
+      </span>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="row"><b>Gewicht</b> <span class="pill" id="dashWeight">—</span></div>
+        <div class="small" id="dashWeightTxt">Noch kein Eintrag.</div>
+      </div>
+      <div class="card">
+        <div class="row"><b>Letzte Gassi-Note</b> <span class="pill" id="dashGassi">—</span></div>
+        <div class="small" id="dashGassiTxt">Noch kein Eintrag.</div>
+      </div>
+      <div class="card">
+        <div class="row"><b>Letzte Kacki-Diagnose</b> <span class="pill" id="dashKacki">—</span></div>
+        <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
+      </div>
+      <div class="card">
+        <div class="row"><b>Letzte Mahlzeit</b> <span class="pill" id="dashFood">—</span></div>
+        <div class="small" id="dashFoodTxt">Noch kein Eintrag.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><b>Notfallkarte</b> <span class="pill" id="dashEmergency">—</span></div>
+      <div class="small" id="dashEmergencyTxt">Noch nicht ausgefüllt.</div>
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" onclick="showTab('notfall')">➡️ Notfallkarte öffnen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GEWICHT -->
+  <section class="tab card hide" id="tab_gewicht">
+    <div class="row">
+      <b>⚖️ Gewicht-Logbuch</b>
+      <span class="pill" id="weightCount">—</span>
+      <span class="right row">
+        <button onclick="exportSection('weight')">📄 Export</button>
+      </span>
+    </div>
+
+    <div class="grid3" style="margin-top:10px;">
+      <div>
+        <label>Datum & Uhrzeit</label>
+        <input id="w_dt" type="datetime-local" />
+      </div>
+      <div>
+        <label>Gewicht (kg)</label>
+        <input id="w_kg" type="number" step="0.1" placeholder="z.B. 12.4" />
+      </div>
+      <div>
+        <label>Notiz (optional)</label>
+        <input id="w_note" type="text" placeholder="z.B. morgens, nach dem Fressen…" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="primary" onclick="addWeight()">➕ Eintragen</button>
+      <span class="small">Tipp: regelmäßig (z.B. 1× pro Woche) eintragen.</span>
+    </div>
+
+    <div class="card chartWrap" style="margin-top:12px;">
+      <b>Gewichtskurve</b>
+      <div class="small">Je mehr Einträge, desto besser die Kurve.</div>
+      <svg id="weightChart" viewBox="0 0 800 220" aria-label="Gewichtskurve"></svg>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <b>Einträge</b>
+      <div class="small muted">Neueste oben. Du kannst auch löschen.</div>
+      <table class="table" id="weightTable"></table>
+    </div>
+  </section>
+
+  <!-- GASSI NOTE -->
+  <section class="tab card hide" id="tab_gassi">
+    <div class="row">
+      <b>🚶 Gassi-Bewertung (Schulnote 1–6)</b>
+      <span class="pill" id="gassiCount">—</span>
+      <span class="right row">
+        <button onclick="exportSection('gassi')">📄 Export</button>
+      </span>
+    </div>
+
+    <div class="grid3" style="margin-top:10px;">
+      <div>
+        <label>Datum & Uhrzeit</label>
+        <input id="g_dt" type="datetime-local" />
+      </div>
+      <div>
+        <label>Note (1 = sehr gut, 6 = schlecht)</label>
+        <select id="g_grade">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        </select>
+      </div>
+      <div>
+        <label>Notiz (optional)</label>
+        <input id="g_note" type="text" placeholder="z.B. Leinenführigkeit, Begegnungen…" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="primary" onclick="addGassi()">➕ Eintragen</button>
+      <span class="small">Kurve: Note 1 ist oben (besser).</span>
+    </div>
+
+    <div class="card chartWrap" style="margin-top:12px;">
+      <b>Gassi-Noten-Kurve</b>
+      <svg id="gassiChart" viewBox="0 0 800 220" aria-label="Gassi Noten"></svg>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <b>Einträge</b>
+      <table class="table" id="gassiTable"></table>
+    </div>
+  </section>
+
+  <!-- KACKI -->
+  <section class="tab card hide" id="tab_kacki">
+    <div class="row">
+      <b>💩 Kacki-Diagnose</b>
+      <span class="pill" id="kackiCount">—</span>
+      <span class="right row">
+        <button onclick="exportSection('kacki')">📄 Export</button>
+      </span>
+    </div>
+
+    <div class="grid3" style="margin-top:10px;">
+      <div>
+        <label>Datum & Uhrzeit</label>
+        <input id="k_dt" type="datetime-local" />
+      </div>
+      <div>
+        <label>Konsistenz (Bristol 1–7)</label>
+        <select id="k_bristol">
+          <option value="1">1 (sehr hart)</option>
+          <option value="2">2</option>
+          <option value="3">3 (gut)</option>
+          <option value="4" selected>4 (ideal)</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7 (sehr flüssig)</option>
+        </select>
+      </div>
+      <div>
+        <label>Farbe</label>
+        <select id="k_color">
+          <option>braun</option>
+          <option>hellbraun</option>
+          <option>dunkel</option>
+          <option>gelblich</option>
+          <option>grünlich</option>
+          <option>schwarz</option>
+          <option>rot (Blut?)</option>
+          <option>grau/weißlich</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:10px;">
+      <div>
+        <label>Extras</label>
+        <div class="row">
+          <label class="pill"><input type="checkbox" id="k_mucus" /> Schleim</label>
+          <label class="pill"><input type="checkbox" id="k_blood" /> Blut</label>
+          <label class="pill"><input type="checkbox" id="k_worms" /> Würmer/Teile</label>
+          <label class="pill"><input type="checkbox" id="k_grass" /> Gras/Fremd</label>
+        </div>
+      </div>
+      <div>
+        <label>Notiz (optional)</label>
+        <input id="k_note" type="text" placeholder="z.B. direkt nach Futterwechsel…" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="primary" onclick="addKacki()">➕ Eintragen</button>
+      <span class="small">Wenn Blut/Schwarz + krank wirkt: Tierarzt kontaktieren.</span>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <b>Einträge</b>
+      <table class="table" id="kackiTable"></table>
+    </div>
+  </section>
+
+  <!-- FUTTER -->
+  <section class="tab card hide" id="tab_futter">
+    <div class="row">
+      <b>🍽️ Futter-Logbuch</b>
+      <span class="pill" id="foodCount">—</span>
+      <span class="right row">
+        <button onclick="exportSection('food')">📄 Export</button>
+      </span>
+    </div>
+
+    <div class="grid3" style="margin-top:10px;">
+      <div>
+        <label>Datum & Uhrzeit</label>
+        <input id="f_dt" type="datetime-local" />
+      </div>
+      <div>
+        <label>Futtermenge (g)</label>
+        <input id="f_amount" type="number" step="1" placeholder="z.B. 180" />
+      </div>
+      <div>
+        <label>Futter (Name/Sorte)</label>
+        <input id="f_food" type="text" placeholder="z.B. Rind, Trockenfutter XYZ…" />
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:10px;">
+      <div>
+        <label>Supplements (optional)</label>
+        <input id="f_supp" type="text" placeholder="z.B. Lachsöl, Gelenk-Pulver…" />
+      </div>
+      <div>
+        <label>Notiz (optional)</label>
+        <input id="f_note" type="text" placeholder="z.B. gut gefressen / wenig Appetit…" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="primary" onclick="addFood()">➕ Eintragen</button>
+      <span class="small">Du kannst pro Mahlzeit einen Eintrag machen.</span>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <b>Einträge</b>
+      <table class="table" id="foodTable"></table>
+    </div>
+  </section>
+
+  <!-- HUNDESCHULE -->
+  <section class="tab card hide" id="tab_hundeschule">
+    <div class="row">
+      <b>🎓 Hundeschule-Logbuch</b>
+      <span class="pill" id="schoolCount">—</span>
+      <span class="right row">
+        <button onclick="exportSection('school')">📄 Export</button>
+      </span>
+    </div>
+
+    <div class="grid3" style="margin-top:10px;">
+      <div>
+        <label>Datum & Uhrzeit</label>
+        <input id="s_dt" type="datetime-local" />
+      </div>
+      <div>
+        <label>Kurs / Thema</label>
+        <input id="s_course" type="text" placeholder="z.B. Junghunde, Leinenführigkeit…" />
+      </div>
+      <div>
+        <label>Note (1–6)</label>
+        <select id="s_grade">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:10px;">
+      <div>
+        <label>Gut gemacht?</label>
+        <select id="s_good">
+          <option value="yes">Ja ✅</option>
+          <option value="no">Nein ❌</option>
+        </select>
+      </div>
+      <div>
+        <label>Notiz (optional)</label>
+        <input id="s_note" type="text" placeholder="z.B. Ablenkung, neue Übung…" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
+      <button class="primary" onclick="addSchool()">➕ Eintragen</button>
+      <span class="small">Kurve: Note 1 ist oben (besser).</span>
+    </div>
+
+    <div class="card chartWrap" style="margin-top:12px;">
+      <b>Hundeschule-Noten-Kurve</b>
+      <svg id="schoolChart" viewBox="0 0 800 220" aria-label="Hundeschule Noten"></svg>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <b>Einträge</b>
+      <table class="table" id="schoolTable"></table>
+    </div>
+  </section>
+
+  <!-- NOTFALL -->
+  <section class="tab card hide" id="tab_notfall">
+    <div class="row">
+      <b>🆘 Notfallkarte</b>
+      <span class="right row">
+        <button class="primary" onclick="saveEmergency()">💾 Speichern</button>
+        <button onclick="exportSection('emergency')">📄 Export</button>
+      </span>
+    </div>
+
+    <div class="grid2" style="margin-top:10px;">
+      <div>
+        <label>Tierarzt / Praxisname</label>
+        <input id="e_name" type="text" placeholder="Name der Praxis" />
+      </div>
+      <div>
+        <label>Telefonnummer</label>
+        <input id="e_phone" type="tel" placeholder="+49 …" />
+      </div>
+      <div>
+        <label>Adresse</label>
+        <input id="e_addr" type="text" placeholder="Straße, PLZ Ort" />
+      </div>
+      <div>
+        <label>Notdienst / 24h (optional)</label>
+        <input id="e_emerg" type="text" placeholder="Notdienst-Nummer / Klinik" />
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:10px;">
+      <div>
+        <label>Allergien / Krankheiten / Medis (optional)</label>
+        <textarea id="e_med" placeholder="z.B. Allergie gegen … / nimmt …"></textarea>
+      </div>
+      <div>
+        <label>Wichtige Hinweise (optional)</label>
+        <textarea id="e_notes" placeholder="z.B. Chipnummer, Maulkorb vorhanden, Gewicht …"></textarea>
+      </div>
+    </div>
+
+    <div class="small" style="margin-top:10px;">
+      Tipp: Du kannst die Telefonnummer am Handy später direkt anrufen, wenn du diese Datei dort öffnest.
+    </div>
+  </section>
+
+  <!-- EXPORT / IMPORT -->
+  <section class="tab card hide" id="tab_export">
+    <div class="row">
+      <b>📦 Export / Backup</b>
+      <span class="right row">
+        <button class="primary" onclick="makeBackup()">Backup erzeugen</button>
+        <button onclick="restoreBackup()">Backup wiederherstellen</button>
+      </span>
+    </div>
+    <div class="small">Backup ist Text (JSON). Den kannst du z.B. in Notizen speichern oder dir selbst schicken.</div>
+    <div style="margin-top:10px;">
+      <textarea id="backupArea" placeholder="Hier erscheint dein Backup… oder füge eins ein, um es wiederherzustellen."></textarea>
+    </div>
+    <div class="small" style="margin-top:10px;">
+      Achtung: Wiederherstellen überschreibt die aktuellen Daten in diesem Browser.
+    </div>
+  </section>
+
+<script>
+  // ---------- Storage Keys ----------
+  const K = {
+    weight: "hh_v2_weight",
+    gassi: "hh_v2_gassi",
+    kacki: "hh_v2_kacki",
+    food:  "hh_v2_food",
+    school:"hh_v2_school",
+    emergency:"hh_v2_emergency"
+  };
+
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+
+  function nowLocalInputValue() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth()+1);
+    const dd = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+  }
+
+  function parseLocalInputToTs(val) {
+    // val like "2026-03-05T18:30"
+    if (!val) return Date.now();
+    const d = new Date(val);
+    const ts = d.getTime();
+    return Number.isFinite(ts) ? ts : Date.now();
+  }
+
+  function fmtDT(ts) {
+    const d = new Date(ts);
+    return d.toLocaleString("de-DE", { weekday:"short", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+  }
+
+  function msToHuman(ms) {
+    if (ms < 0) ms = 0;
+    const totalMin = Math.floor(ms / 60000);
+    const days = Math.floor(totalMin / (60*24));
+    const hours = Math.floor((totalMin - days*60*24) / 60);
+    const mins = totalMin % 60;
+    if (totalMin === 0) return "gerade eben";
+    if (days > 0) return `vor ${days}d ${hours}h`;
+    if (hours > 0) return `vor ${hours}h ${mins}m`;
+    return `vor ${mins}m`;
+  }
+
+  function loadArr(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+    catch { return []; }
+  }
+  function saveArr(key, arr) {
+    localStorage.setItem(key, JSON.stringify(arr));
+  }
+
+  function loadObj(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "null"); }
+    catch { return null; }
+  }
+  function saveObj(key, obj) {
+    localStorage.setItem(key, JSON.stringify(obj));
+  }
+
+  function esc(s) {
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  function isToday(ts) {
+    const d = new Date(ts);
+    const n = new Date();
+    return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+  }
+
+  // ---------- Tabs ----------
+  const tabs = [
+    { id:"dashboard", label:"🏠 Übersicht" },
+    { id:"gewicht", label:"⚖️ Gewicht" },
+    { id:"gassi", label:"🚶 Gassi-Note" },
+    { id:"kacki", label:"💩 Kacki" },
+    { id:"futter", label:"🍽️ Futter" },
+    { id:"hundeschule", label:"🎓 Hundeschule" },
+    { id:"notfall", label:"🆘 Notfallkarte" }
+  ];
+
+  function buildTabs() {
+    const wrap = $("tabs");
+    wrap.innerHTML = tabs.map(t => `<button class="tabbtn" id="btn_${t.id}" onclick="showTab('${t.id}')">${t.label}</button>`).join("");
+    // export tab hidden from main bar, erreichbar über button
+  }
+
+  function showTab(id) {
+    document.querySelectorAll(".tab").forEach(el => el.classList.add("hide"));
+    $("tab_"+id).classList.remove("hide");
+
+    document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
+    const btn = $("btn_"+id);
+    if (btn) btn.classList.add("active");
+
+    if (id === "export") { /* no tab button */ }
+    renderAll(); // refresh when switching
+  }
+
+  function openExport() {
+    document.querySelectorAll(".tab").forEach(el => el.classList.add("hide"));
+    $("tab_export").classList.remove("hide");
+    document.querySelectorAll(".tabbtn").forEach(b => b.classList.remove("active"));
+    renderAll();
+  }
+
+  // ---------- Simple SVG line chart ----------
+  function renderLineChart(svgEl, points, opts) {
+    // points: [{x:ts, y:number}]
+    // opts: { yMin, yMax, invertY=false, yTicks=[...], labelLeft, labelRight }
+    svgEl.innerHTML = "";
+    const W = 800, H = 220;
+    const padL = 54, padR = 18, padT = 16, padB = 32;
+
+    // frame
+    const bg = `<rect x="0" y="0" width="${W}" height="${H}" rx="14" ry="14" fill="transparent" stroke="none"></rect>`;
+    svgEl.insertAdjacentHTML("beforeend", bg);
+
+    if (!points || points.length < 2) {
+      svgEl.insertAdjacentHTML("beforeend",
+        `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="14" fill="#666">Noch nicht genug Daten für eine Kurve.</text>`
+      );
+      return;
+    }
+
+    const xs = points.map(p=>p.x);
+    const ys = points.map(p=>p.y);
+    const xMin = Math.min(...xs), xMax = Math.max(...xs);
+
+    let yMin = opts?.yMin ?? Math.min(...ys);
+    let yMax = opts?.yMax ?? Math.max(...ys);
+
+    if (yMin === yMax) { yMin -= 1; yMax += 1; }
+
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const xScale = (x) => padL + ((x - xMin) / (xMax - xMin)) * plotW;
+    const yScale = (y) => {
+      const t = (y - yMin) / (yMax - yMin);
+      const yy = opts?.invertY ? (padT + t * plotH) : (padT + (1 - t) * plotH);
+      return yy;
+    };
+
+    // grid + y labels
+    const ticks = opts?.yTicks || 5;
+    let yTickVals = [];
+    if (Array.isArray(ticks)) yTickVals = ticks;
+    else {
+      const n = ticks;
+      for (let i=0;i<=n;i++) yTickVals.push(yMin + (i*(yMax-yMin)/n));
+    }
+
+    yTickVals.forEach(v=>{
+      const y = yScale(v);
+      svgEl.insertAdjacentHTML("beforeend", `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#e9e9e9" />`);
+      svgEl.insertAdjacentHTML("beforeend", `<text x="${padL-10}" y="${y+4}" text-anchor="end" font-size="12" fill="#666">${(Math.round(v*10)/10).toString()}</text>`);
+    });
+
+    // x labels: start/end
+    const xStart = new Date(xMin).toLocaleDateString("de-DE", { day:"2-digit", month:"2-digit" });
+    const xEnd = new Date(xMax).toLocaleDateString("de-DE", { day:"2-digit", month:"2-digit" });
+    svgEl.insertAdjacentHTML("beforeend", `<text x="${padL}" y="${H-10}" text-anchor="start" font-size="12" fill="#666">${xStart}</text>`);
+    svgEl.insertAdjacentHTML("beforeend", `<text x="${W-padR}" y="${H-10}" text-anchor="end" font-size="12" fill="#666">${xEnd}</text>`);
+
+    // path
+    const d = points
+      .sort((a,b)=>a.x-b.x)
+      .map((p,i)=> `${i===0?'M':'L'} ${xScale(p.x).toFixed(2)} ${yScale(p.y).toFixed(2)}`)
+      .join(" ");
+    svgEl.insertAdjacentHTML("beforeend", `<path d="${d}" fill="none" stroke="#222" stroke-width="2.2" />`);
+
+    // dots
+    points.sort((a,b)=>a.x-b.x).forEach(p=>{
+      svgEl.insertAdjacentHTML("beforeend", `<circle cx="${xScale(p.x)}" cy="${yScale(p.y)}" r="3.6" fill="#222" />`);
+    });
+  }
+
+  // ---------- Weight ----------
+  function addWeight() {
+    const ts = parseLocalInputToTs($("w_dt").value);
+    const kg = parseFloat($("w_kg").value);
+    const note = ($("w_note").value || "").trim();
+    if (!Number.isFinite(kg) || kg <= 0) { alert("Bitte ein gültiges Gewicht eingeben."); return; }
+
+    const arr = loadArr(K.weight);
+    arr.unshift({ ts, kg, note });
+    saveArr(K.weight, arr);
+
+    $("w_kg").value = "";
+    $("w_note").value = "";
+    renderAll();
+  }
+
+  function delWeight(i) {
+    const arr = loadArr(K.weight);
+    if (!arr[i]) return;
+    if (!confirm("Gewicht-Eintrag wirklich löschen?")) return;
+    arr.splice(i,1);
+    saveArr(K.weight, arr);
+    renderAll();
+  }
+
+  function renderWeight() {
+    const arr = loadArr(K.weight);
+    $("weightCount").textContent = `${arr.length} Einträge`;
+
+    // chart
+    const pts = arr.slice().reverse().map(e => ({ x:e.ts, y:e.kg }));
+    renderLineChart($("weightChart"), pts, { yTicks: 5 });
+
+    // table
+    const rows = arr.map((e, idx) => `
+      <tr>
+        <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
+        <td style="width:110px;">${esc(e.kg.toFixed(1))} kg</td>
+        <td>${e.note ? esc(e.note) : '<span class="muted">—</span>'}</td>
+        <td style="width:90px;"><button onclick="delWeight(${idx})">Löschen</button></td>
+      </tr>
+    `).join("");
+
+    $("weightTable").innerHTML = `
+      <tr><th>Datum</th><th>Gewicht</th><th>Notiz</th><th></th></tr>
+      ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
+    `;
+  }
+
+  // ---------- Gassi ----------
+  function addGassi() {
+    const ts = parseLocalInputToTs($("g_dt").value);
+    const grade = parseInt($("g_grade").value, 10);
+    const note = ($("g_note").value || "").trim();
+    if (!Number.isFinite(grade) || grade < 1 || grade > 6) { alert("Bitte eine Note 1–6 wählen."); return; }
+
+    const arr = loadArr(K.gassi);
+    arr.unshift({ ts, grade, note });
+    saveArr(K.gassi, arr);
+
+    $("g_note").value = "";
+    renderAll();
+  }
+
+  function delGassi(i) {
+    const arr = loadArr(K.gassi);
+    if (!arr[i]) return;
+    if (!confirm("Gassi-Eintrag wirklich löschen?")) return;
+    arr.splice(i,1);
+    saveArr(K.gassi, arr);
+    renderAll();
+  }
+
+  function renderGassi() {
+    const arr = loadArr(K.gassi);
+    $("gassiCount").textContent = `${arr.length} Einträge`;
+
+    const pts = arr.slice().reverse().map(e => ({ x:e.ts, y:e.grade }));
+    renderLineChart($("gassiChart"), pts, { yMin:1, yMax:6, invertY:true, yTicks:[1,2,3,4,5,6] });
+
+    const rows = arr.map((e, idx) => `
+      <tr>
+        <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
+        <td style="width:110px;">Note <b>${esc(e.grade)}</b></td>
+        <td>${e.note ? esc(e.note) : '<span class="muted">—</span>'}</td>
+        <td style="width:90px;"><button onclick="delGassi(${idx})">Löschen</button></td>
+      </tr>
+    `).join("");
+
+    $("gassiTable").innerHTML = `
+      <tr><th>Datum</th><th>Bewertung</th><th>Notiz</th><th></th></tr>
+      ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
+    `;
+  }
+
+  // ---------- Kacki ----------
+  function addKacki() {
+    const ts = parseLocalInputToTs($("k_dt").value);
+    const bristol = parseInt($("k_bristol").value, 10);
+    const color = $("k_color").value;
+    const extras = [];
+    if ($("k_mucus").checked) extras.push("Schleim");
+    if ($("k_blood").checked) extras.push("Blut");
+    if ($("k_worms").checked) extras.push("Würmer/Teile");
+    if ($("k_grass").checked) extras.push("Gras/Fremd");
+    const note = ($("k_note").value || "").trim();
+
+    const arr = loadArr(K.kacki);
+    arr.unshift({ ts, bristol, color, extras, note });
+    saveArr(K.kacki, arr);
+
+    $("k_mucus").checked = $("k_blood").checked = $("k_worms").checked = $("k_grass").checked = false;
+    $("k_note").value = "";
+    renderAll();
+  }
+
+  function delKacki(i) {
+    const arr = loadArr(K.kacki);
+    if (!arr[i]) return;
+    if (!confirm("Kacki-Eintrag wirklich löschen?")) return;
+    arr.splice(i,1);
+    saveArr(K.kacki, arr);
+    renderAll();
+  }
+
+  function renderKacki() {
+    const arr = loadArr(K.kacki);
+    $("kackiCount").textContent = `${arr.length} Einträge`;
+
+    const rows = arr.map((e, idx) => {
+      const extraTxt = (e.extras && e.extras.length) ? e.extras.join(", ") : "—";
+      const warn = (e.color || "").toLowerCase().includes("schwarz") || (extraTxt.includes("Blut"));
+      return `
+        <tr class="${warn ? 'danger' : ''}">
+          <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
+          <td style="width:160px;">Bristol: <b>${esc(e.bristol)}</b><br><span class="muted">${esc(e.color)}</span></td>
+          <td>Extras: ${esc(extraTxt)}<br>${e.note ? `Notiz: ${esc(e.note)}` : `<span class="muted">Notiz: —</span>`}</td>
+          <td style="width:90px;"><button onclick="delKacki(${idx})">Löschen</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    $("kackiTable").innerHTML = `
+      <tr><th>Datum</th><th>Stuhl</th><th>Details</th><th></th></tr>
+      ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
+    `;
+  }
+
+  // ---------- Food ----------
+  function addFood() {
+    const ts = parseLocalInputToTs($("f_dt").value);
+    const amount = parseInt($("f_amount").value, 10);
+    const food = ($("f_food").value || "").trim();
+    const supp = ($("f_supp").value || "").trim();
+    const note = ($("f_note").value || "").trim();
+
+    if (!Number.isFinite(amount) || amount <= 0) { alert("Bitte Futtermenge (g) eingeben."); return; }
+    if (!food) { alert("Bitte Futter (Name/Sorte) eingeben."); return; }
+
+    const arr = loadArr(K.food);
+    arr.unshift({ ts, amount, food, supp, note });
+    saveArr(K.food, arr);
+
+    $("f_amount").value = "";
+    $("f_food").value = "";
+    $("f_supp").value = "";
+    $("f_note").value = "";
+    renderAll();
+  }
+
+  function delFood(i) {
+    const arr = loadArr(K.food);
+    if (!arr[i]) return;
+    if (!confirm("Mahlzeit-Eintrag wirklich löschen?")) return;
+    arr.splice(i,1);
+    saveArr(K.food, arr);
+    renderAll();
+  }
+
+  function renderFood() {
+    const arr = loadArr(K.food);
+    $("foodCount").textContent = `${arr.length} Einträge`;
+
+    const rows = arr.map((e, idx) => `
+      <tr>
+        <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
+        <td style="width:160px;"><b>${esc(e.amount)} g</b><br><span class="muted">${esc(e.food)}</span></td>
+        <td>
+          Supplements: ${e.supp ? esc(e.supp) : '<span class="muted">—</span>'}<br>
+          ${e.note ? `Notiz: ${esc(e.note)}` : '<span class="muted">Notiz: —</span>'}
+        </td>
+        <td style="width:90px;"><button onclick="delFood(${idx})">Löschen</button></td>
+      </tr>
+    `).join("");
+
+    $("foodTable").innerHTML = `
+      <tr><th>Datum</th><th>Mahlzeit</th><th>Details</th><th></th></tr>
+      ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
+    `;
+  }
+
+  // ---------- Dog school ----------
+  function addSchool() {
+    const ts = parseLocalInputToTs($("s_dt").value);
+    const course = ($("s_course").value || "").trim();
+    const grade = parseInt($("s_grade").value, 10);
+    const good = $("s_good").value;
+    const note = ($("s_note").value || "").trim();
+
+    if (!course) { alert("Bitte Kurs/Thema eingeben."); return; }
+    if (!Number.isFinite(grade) || grade < 1 || grade > 6) { alert("Bitte Note 1–6 wählen."); return; }
+
+    const arr = loadArr(K.school);
+    arr.unshift({ ts, course, grade, good, note });
+    saveArr(K.school, arr);
+
+    $("s_course").value = "";
+    $("s_note").value = "";
+    renderAll();
+  }
+
+  function delSchool(i) {
+    const arr = loadArr(K.school);
+    if (!arr[i]) return;
+    if (!confirm("Hundeschule-Eintrag wirklich löschen?")) return;
+    arr.splice(i,1);
+    saveArr(K.school, arr);
+    renderAll();
+  }
+
+  function renderSchool() {
+    const arr = loadArr(K.school);
+    $("schoolCount").textContent = `${arr.length} Einträge`;
+
+    const pts = arr.slice().reverse().map(e => ({ x:e.ts, y:e.grade }));
+    renderLineChart($("schoolChart"), pts, { yMin:1, yMax:6, invertY:true, yTicks:[1,2,3,4,5,6] });
+
+    const rows = arr.map((e, idx) => `
+      <tr class="${e.good==='yes' ? 'ok' : 'danger'}">
+        <td style="width:190px;"><b>${esc(fmtDT(e.ts))}</b></td>
+        <td style="width:220px;"><b>${esc(e.course)}</b><br><span class="muted">Note ${esc(e.grade)} · ${e.good==='yes'?'Ja ✅':'Nein ❌'}</span></td>
+        <td>${e.note ? esc(e.note) : '<span class="muted">—</span>'}</td>
+        <td style="width:90px;"><button onclick="delSchool(${idx})">Löschen</button></td>
+      </tr>
+    `).join("");
+
+    $("schoolTable").innerHTML = `
+      <tr><th>Datum</th><th>Kurs</th><th>Notiz</th><th></th></tr>
+      ${rows || `<tr><td colspan="4" class="muted">Noch keine Einträge.</td></tr>`}
+    `;
+  }
+
+  // ---------- Emergency ----------
+  function saveEmergency() {
+    const obj = {
+      name: ($("e_name").value || "").trim(),
+      phone: ($("e_phone").value || "").trim(),
+      addr: ($("e_addr").value || "").trim(),
+      emerg: ($("e_emerg").value || "").trim(),
+      med: ($("e_med").value || "").trim(),
+      notes: ($("e_notes").value || "").trim(),
+      savedAt: Date.now()
+    };
+    saveObj(K.emergency, obj);
+    alert("Notfallkarte gespeichert.");
+    renderAll();
+  }
+
+  function renderEmergency() {
+    const obj = loadObj(K.emergency) || {};
+    $("e_name").value = obj.name || "";
+    $("e_phone").value = obj.phone || "";
+    $("e_addr").value = obj.addr || "";
+    $("e_emerg").value = obj.emerg || "";
+    $("e_med").value = obj.med || "";
+    $("e_notes").value = obj.notes || "";
+  }
+
+  // ---------- Dashboard ----------
+  function latest(arr) { return (arr && arr.length) ? arr[0] : null; }
+
+  function renderDashboard() {
+    const w = loadArr(K.weight);
+    const g = loadArr(K.gassi);
+    const k = loadArr(K.kacki);
+    const f = loadArr(K.food);
+    const s = loadArr(K.school);
+    const e = loadObj(K.emergency);
+
+    const lw = latest(w);
+    const lg = latest(g);
+    const lk = latest(k);
+    const lf = latest(f);
+    const ls = latest(s);
+
+    // counts today
+    let today = 0;
+    [w,g,k,f,s].forEach(arr => arr.forEach(e => { if (isToday(e.ts)) today++; }));
+
+    $("todayPill").textContent = `Heute: ${today} Einträge`;
+
+    // weight
+    if (lw) {
+      $("dashWeight").textContent = `${lw.kg.toFixed(1)} kg`;
+      $("dashWeightTxt").textContent = `${fmtDT(lw.ts)} (${msToHuman(Date.now()-lw.ts)})${lw.note?` · ${lw.note}`:""}`;
+    } else {
+      $("dashWeight").textContent = "—";
+      $("dashWeightTxt").textContent = "Noch kein Eintrag.";
+    }
+
+    // gassi
+    if (lg) {
+      $("dashGassi").textContent = `Note ${lg.grade}`;
+      $("dashGassiTxt").textContent = `${fmtDT(lg.ts)} (${msToHuman(Date.now()-lg.ts)})${lg.note?` · ${lg.note}`:""}`;
+    } else {
+      $("dashGassi").textContent = "—";
+      $("dashGassiTxt").textContent = "Noch kein Eintrag.";
+    }
+
+    // kacki
+    if (lk) {
+      const extraTxt = (lk.extras && lk.extras.length) ? ` · ${lk.extras.join(", ")}` : "";
+      $("dashKacki").textContent = `Bristol ${lk.bristol}`;
+      $("dashKackiTxt").textContent = `${fmtDT(lk.ts)} (${msToHuman(Date.now()-lk.ts)}) · ${lk.color}${extraTxt}${lk.note?` · ${lk.note}`:""}`;
+    } else {
+      $("dashKacki").textContent = "—";
+      $("dashKackiTxt").textContent = "Noch kein Eintrag.";
+    }
+
+    // food
+    if (lf) {
+      $("dashFood").textContent = `${lf.amount} g`;
+      $("dashFoodTxt").textContent = `${fmtDT(lf.ts)} (${msToHuman(Date.now()-lf.ts)}) · ${lf.food}${lf.supp?` · Supp: ${lf.supp}`:""}${lf.note?` · ${lf.note}`:""}`;
+    } else {
+      $("dashFood").textContent = "—";
+      $("dashFoodTxt").textContent = "Noch kein Eintrag.";
+    }
+
+    // emergency
+    if (e && (e.name || e.phone)) {
+      $("dashEmergency").textContent = "✅ vorhanden";
+      const lines = [];
+      if (e.name) lines.push(e.name);
+      if (e.phone) lines.push(`Tel: ${e.phone}`);
+      if (e.addr) lines.push(e.addr);
+      if (e.emerg) lines.push(`Notdienst: ${e.emerg}`);
+      $("dashEmergencyTxt").textContent = lines.join(" · ");
+    } else {
+      $("dashEmergency").textContent = "—";
+      $("dashEmergencyTxt").textContent = "Noch nicht ausgefüllt.";
+    }
+
+    // badge (simple)
+    let anyWarn = false;
+    // Example: warn if last kacki had blood/black, or last food older than 12h? We'll keep it lightweight.
+    if (lk) {
+      const hasBlood = (lk.extras||[]).includes("Blut");
+      const isBlack = (lk.color||"").toLowerCase().includes("schwarz");
+      if (hasBlood || isBlack) anyWarn = true;
+    }
+    $("badge").textContent = anyWarn ? "⚠️ Achtung (Kacki)" : "✅ Alles ok";
+  }
+
+  // ---------- Export per section ----------
+  function exportSection(which) {
+    let text = "";
+    if (which === "emergency") {
+      const e = loadObj(K.emergency) || {};
+      text = [
+        "NOTFALLKARTE",
+        `Praxis: ${e.name || "-"}`,
+        `Telefon: ${e.phone || "-"}`,
+        `Adresse: ${e.addr || "-"}`,
+        `Notdienst: ${e.emerg || "-"}`,
+        `Allergien/Medis: ${e.med || "-"}`,
+        `Hinweise: ${e.notes || "-"}`,
+      ].join("\n");
+    } else if (which === "weight") {
+      const arr = loadArr(K.weight);
+      text = arr.map(e => `${fmtDT(e.ts)} — ${e.kg.toFixed(1)} kg${e.note?` — ${e.note}`:""}`).join("\n") || "Keine Einträge.";
+    } else if (which === "gassi") {
+      const arr = loadArr(K.gassi);
+      text = arr.map(e => `${fmtDT(e.ts)} — Note ${e.grade}${e.note?` — ${e.note}`:""}`).join("\n") || "Keine Einträge.";
+    } else if (which === "kacki") {
+      const arr = loadArr(K.kacki);
+      text = arr.map(e => {
+        const extraTxt = (e.extras && e.extras.length) ? ` — Extras: ${e.extras.join(", ")}` : "";
+        return `${fmtDT(e.ts)} — Bristol ${e.bristol} — ${e.color}${extraTxt}${e.note?` — ${e.note}`:""}`;
+      }).join("\n") || "Keine Einträge.";
+    } else if (which === "food") {
+      const arr = loadArr(K.food);
+      text = arr.map(e => `${fmtDT(e.ts)} — ${e.amount} g — ${e.food}${e.supp?` — Supp: ${e.supp}`:""}${e.note?` — ${e.note}`:""}`).join("\n") || "Keine Einträge.";
+    } else if (which === "school") {
+      const arr = loadArr(K.school);
+      text = arr.map(e => `${fmtDT(e.ts)} — ${e.course} — Note ${e.grade} — ${e.good==='yes'?'Ja':'Nein'}${e.note?` — ${e.note}`:""}`).join("\n") || "Keine Einträge.";
+    } else {
+      text = "Unbekannter Export.";
+    }
+    openExport();
+    $("backupArea").value = text;
+  }
+
+  // ---------- Full backup ----------
+  function makeBackup() {
+    const payload = {
+      version: "hh_v2",
+      createdAt: Date.now(),
+      data: {
+        weight: loadArr(K.weight),
+        gassi: loadArr(K.gassi),
+        kacki: loadArr(K.kacki),
+        food:  loadArr(K.food),
+        school:loadArr(K.school),
+        emergency: loadObj(K.emergency)
+      }
+    };
+    $("backupArea").value = JSON.stringify(payload, null, 2);
+  }
+
+  function restoreBackup() {
+    const txt = ($("backupArea").value || "").trim();
+    if (!txt) { alert("Bitte Backup-Text einfügen."); return; }
+    let obj = null;
+    try { obj = JSON.parse(txt); } catch { alert("Das sieht nicht nach gültigem JSON aus."); return; }
+    if (!obj || !obj.data) { alert("Backup-Format nicht erkannt."); return; }
+    if (!confirm("Wiederherstellen überschreibt aktuelle Daten. Fortfahren?")) return;
+
+    saveArr(K.weight, Array.isArray(obj.data.weight) ? obj.data.weight : []);
+    saveArr(K.gassi, Array.isArray(obj.data.gassi) ? obj.data.gassi : []);
+    saveArr(K.kacki, Array.isArray(obj.data.kacki) ? obj.data.kacki : []);
+    saveArr(K.food,  Array.isArray(obj.data.food) ? obj.data.food : []);
+    saveArr(K.school,Array.isArray(obj.data.school) ? obj.data.school : []);
+    saveObj(K.emergency, obj.data.emergency || null);
+
+    alert("Backup wiederhergestellt.");
+    renderAll();
+  }
+
+  // ---------- Reset ----------
+  function resetAll() {
+    if (!confirm("Wirklich ALLE Daten löschen?")) return;
+    Object.values(K).forEach(key => localStorage.removeItem(key));
+    renderAll();
+    alert("Alles gelöscht.");
+  }
+
+  // ---------- Render all ----------
+  function presetDefaults() {
+    $("w_dt").value = nowLocalInputValue();
+    $("g_dt").value = nowLocalInputValue();
+    $("k_dt").value = nowLocalInputValue();
+    $("f_dt").value = nowLocalInputValue();
+    $("s_dt").value = nowLocalInputValue();
+  }
+
+  function renderAll() {
+    presetDefaults();
+    renderDashboard();
+    renderWeight();
+    renderGassi();
+    renderKacki();
+    renderFood();
+    renderSchool();
+    renderEmergency();
+  }
+
+  // init
+  buildTabs();
+  showTab("dashboard");
+  renderAll();
+  setInterval(renderAll, 30_000); // aktualisiert "vor x" auf dem Dashboard
+</script>
+</body>
+</html>
