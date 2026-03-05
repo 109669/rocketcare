@@ -211,6 +211,22 @@ body.dark .tabbtn{ background: rgba(255,255,255,0.06); }
   font-size: 13px;
   max-width: 260px;
 }
+.accordion-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.accordion-content{
+  margin-top:10px;
+  display:none;
+}
+
+.accordion.open .accordion-content{
+  display:block;
+}
 body.dark .tooltip{ background: rgba(28,28,30,0.92); }
   </style>
 </head>
@@ -237,35 +253,71 @@ body.dark .tooltip{ background: rgba(28,28,30,0.92); }
   <div class="hr"></div>
 
   <div class="grid2">
-    <div class="card">
-      <div class="row"><b>Gewicht</b> <span class="pill" id="dashWeight">—</span></div>
+
+  <div class="card accordion">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>⚖️ Gewicht</span>
+      <span class="pill" id="dashWeight">—</span>
+    </div>
+
+    <div class="accordion-content">
       <div class="small" id="dashWeightTxt">Noch kein Eintrag.</div>
     </div>
+  </div>
 
-    <div class="card">
-      <div class="row"><b>Letzte Gassi-Note</b> <span class="pill" id="dashGassi">—</span></div>
+  <div class="card accordion">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🐕 Letzte Gassi-Note</span>
+      <span class="pill" id="dashGassi">—</span>
+    </div>
+
+    <div class="accordion-content">
       <div class="small" id="dashGassiTxt">Noch kein Eintrag.</div>
     </div>
+  </div>
 
-    <div class="card">
-      <div class="row"><b>Letzte Kacki-Diagnose</b> <span class="pill" id="dashKacki">—</span></div>
-      <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
+  <div class="card accordion">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💩 Letzte Kacki-Diagnose</span>
+      <span class="pill" id="dashKacki">—</span>
     </div>
 
-    <div class="card">
-      <div class="row"><b>Letzte Mahlzeit</b> <span class="pill" id="dashFood">—</span></div>
+    <div class="accordion-content">
+      <div class="small" id="dashKackiTxt">Noch kein Eintrag.</div>
+    </div>
+  </div>
+
+  <div class="card accordion">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🍖 Letzte Mahlzeit</span>
+      <span class="pill" id="dashFood">—</span>
+    </div>
+
+    <div class="accordion-content">
       <div class="small" id="dashFoodTxt">Noch kein Eintrag.</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="row"><b>Notfallkarte</b> <span class="pill" id="dashEmergency">—</span></div>
+</div>
+
+<div class="card accordion">
+
+  <div class="accordion-header" onclick="toggleAccordion(this)">
+    <span>🚑 Notfallkarte</span>
+    <span class="pill" id="dashEmergency">—</span>
+  </div>
+
+  <div class="accordion-content">
     <div class="small" id="dashEmergencyTxt">Noch nicht ausgefüllt.</div>
+
     <div class="row" style="margin-top:10px;">
-      <button class="primary" onclick="showTab('notfall')">➡️ Notfallkarte öffnen</button>
+      <button class="primary" onclick="showTab('notfall')">
+        ➡️ Notfallkarte öffnen
+      </button>
     </div>
   </div>
 
+</div>
 </section>
 
 
@@ -688,7 +740,10 @@ function toggleTheme() {
     const d = new Date(ts);
     return d.toLocaleString("de-DE", { weekday:"short", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
   }
-
+function toggleAccordion(el){
+  const card = el.closest(".accordion");
+  card.classList.toggle("open");
+}
   function msToHuman(ms) {
     if (ms < 0) ms = 0;
     const totalMin = Math.floor(ms / 60000);
